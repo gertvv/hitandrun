@@ -50,19 +50,41 @@ testTransformation <- function() {
 
 # HAR
 
+distance2 <- function(x) {
+  sum <-  0;
+  for (e in x) {
+    sum <- sum + (e*e);
+  }
+  sqrt(sum);
+}
+
+normalize2 <- function(x) {
+  radius <- distance2(x);
+  x/radius;
+}  
+
+sampleHyperSphere <- function(dim) {
+  x <- rnorm(dim, mean=0, sd=1);
+  normalize2(x);
+}
+
 # generate a random direction in n-dimensional space
 # FIXME: implement for n != 2
 randDir <- function(n) {
-	stopifnot(n == 2)
-	d <- runif(1, 0, 2*pi)[1] # random direction
-	c(cos(d), sin(d)) # transform to x/y
+	#stopifnot(n == 2)
+	if (n == 2) {
+		d <- runif(1, 0, 2*pi)[1] # random direction
+		c(cos(d), sin(d)) # transform to x/y
+	} else {
+		sampleHyperSphere(as.numeric(n))
+	}
 }
 
 # x0: starting point; niter: number of iterations; bound: bounding box function; hit: hit determination function.
 har <- function(x0, niter, bound, hit) {
 	misses <- 0
 	x <- as.list(rep(0, niter))
-	n <- dim(x0)
+	n <- length(x0)
 	x[[1]] <- x0
 	for (i in 2:niter) {
 		d <- randDir(n) # random direction
@@ -92,11 +114,14 @@ har <- function(x0, niter, bound, hit) {
 
 # hit calculation for (n-1)-dimensional simplex
 # basis: orthonormal basis for the (n-1)-dimensional simplex in n-dimensional space
-createHitSimplex <- function(basis) {
+createHitSimplex <- function(basis, constr=NULL) {
 	n <- dim(basis)[1]
 	a1 <- diag(rep(-1, n)) # -1*w[i] <= 0
-	a2 <- 1 + c1 # (\sum w[j]) - w[i] <= 1
+	a2 <- 1 + a1 # (\sum w[j]) - w[i] <= 1
 	a <- cbind(rbind(a1, a2), c(rep(0, n), rep(1, n)))
+	if (!is.null(constr)) {
+		a <- rbind(a, constr)
+	}
 	function(x) {
 		x <- basis %*% x # change of basis
 		w <- rbind(1/n + x, -1) # translation
@@ -111,23 +136,28 @@ inverse <- function(mat) {
 }
 
 # create a bounding box given a (n-1) basis and extreme points in R^n
-createBoundBox <- function(basis, extreme) {
-	n <- dim(basis)[2]
+createBoundBox <- function(basis, extreme=diag(n)) {
+	n <- dim(basis)[1]
 	extreme <- t(basis) %*% (extreme - 1/n) # extreme points
 	lb <- apply(extreme, 1, min)
 	ub <- apply(extreme, 1, max)
 	function(x, d) {
 		c(
-			max(sapply(1:n, function(i) { min((lb[i] - x[i]) / d[i], (ub[i] - x[i]) / d[i]) })),
-			min(sapply(1:n, function(i) { max((lb[i] - x[i]) / d[i], (ub[i] - x[i]) / d[i]) }))
+			max(sapply(1:(n-1), function(i) { min((lb[i] - x[i]) / d[i], (ub[i] - x[i]) / d[i]) })),
+			min(sapply(1:(n-1), function(i) { max((lb[i] - x[i]) / d[i], (ub[i] - x[i]) / d[i]) }))
 		)
 	}
 }
 
-basis <- matrix(c(1, 0, -1, 0, 1, -1), nrow=3)
-on <- orthonormalization(basis, basis=F, norm=T)
-hit <- createHitSimplex(on)
-bound <- createBoundBox(on, diag(3))
-samples <- har(c(0,0), 1000, bound, hit)
-result <- t(sapply(samples[[1]], function(x) { on %*% x })) + 1/3
+# create basis for (translated) n-dim simplex
+basis <- function(n) {
+	b <- rbind(diag(n-1), rep(-1, n-1))
+	orthonormalization(b, basis=F, norm=T)
+}
 
+n <- 3
+on <- basis(n)
+hit <- createHitSimplex(on)
+bound <- createBoundBox(on)
+samples <- har(rep(0, n - 1), 1000, bound, hit)
+result <- t(sapply(samples[[1]], function(x) { on %*% x })) + 1/n
