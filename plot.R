@@ -55,6 +55,7 @@ testTransformation <- function() {
 
 # x0: starting point; niter: number of iterations; bound: bounding box function; hit: hit determination function.
 har <- function(x0, niter, bound, hit) {
+	misses <- 0
 	x <- as.list(rep(0, niter))
 	x[[1]] <- x0
 	for (i in 2:niter) {
@@ -69,6 +70,7 @@ har <- function(x0, niter, bound, hit) {
 				x[[i]] <- xN
 				wasHit <- TRUE
 			} else {
+				misses <- misses + 1
 				x[[i]] <- x[[i-1]]
 				# update bounds
 				if (l > 0) {
@@ -80,7 +82,7 @@ har <- function(x0, niter, bound, hit) {
 			}
 		}
 	}
-	x
+	list(x, misses)
 }
 
 # a bounding box of sqrt(2/3) around origin
@@ -101,11 +103,32 @@ createHitSimplex <- function(basis) {
 		w <- 1/3 + x # translation (FIXME: correct for all n?)
 		allBounds <- min(sapply(w, function(wi) { wi >= 0 }))
 		sumBounds <- min(c(w[1] + w[2] <= 1, w[1] + w[3] <= 1, w[2] + w[3] <= 1)) # FIXME: generalize
-		allBounds && sumBounds
+		allBounds && sumBounds #&& w[1] <= 0.5 && w[2]/w[3] >= 0.3 && w[2]/w[3] <= 1.1
+	}
+}
+
+# give the inverse of an invertible matrix
+inverse <- function(mat) {
+	d <- svd(mat)
+	d$v%*%diag(1/d$d)%*%t(d$u)
+}
+
+# create a bounding box given a (n-1) basis and extreme points in R^n
+createBoundBox <- function(basis, extreme) {
+	n <- dim(basis)[2]
+	extreme <- t(basis) %*% (extreme - 1/3) # extreme points
+	lb <- apply(extreme, 1, min)
+	ub <- apply(extreme, 1, max)
+	function(x, d) {
+		c(
+			max(sapply(1:n, function(i) { min((lb[i] - x[i]) / d[i], (ub[i] - x[i]) / d[i]) })),
+			min(sapply(1:n, function(i) { max((lb[i] - x[i]) / d[i], (ub[i] - x[i]) / d[i]) }))
+		)
 	}
 }
 
 hit <- createHitSimplex(on)
-samples <- har(c(0,0), 1000, boundBox, hit)
-result <- t(sapply(samples, function(x) { on %*% x })) + 1/3
+bound <- createBoundBox(on, diag(3))
+samples <- har(c(0,0), 1000, bound, hit)
+result <- t(sapply(samples[[1]], function(x) { on %*% x })) + 1/3
 
