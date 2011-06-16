@@ -93,16 +93,20 @@ har <- function(x0, niter, bound, hit) {
 	x <- as.list(rep(0, niter))
 	x[[1]] <- x0
 	for (i in 2:niter) {
+		print(paste(c("Iteration", i)))
 		d <- runif(1, 0, 2*pi)[1] # random direction
 		d <- c(cos(d), sin(d)) # transform to x/y
 		bounds <- bound(x[[i-1]], d)
+		print(paste(c("x=", x[[i-1]], "d=", d, "b=", bounds)))
 		wasHit <- FALSE
 		while (!wasHit) {
 			l <- runif(1, bounds[1], bounds[2])[1] # random distance
-			xN <- x[[i]] + l * d
+			xN <- x[[i-1]] + l * d
+			print(paste(c("l=", l, "xN=", xN)))
 			if (hit(xN)) {
 				x[[i]] <- xN
 				wasHit <- TRUE
+				print("HIT")
 			} else {
 				x[[i]] <- x[[i-1]]
 				# update bounds
@@ -112,6 +116,7 @@ har <- function(x0, niter, bound, hit) {
 				if (l < 0) {
 					bounds[1] <- l
 				}
+				print(paste(c("MISS; b=", bounds)))
 			}
 		}
 	}
@@ -136,9 +141,8 @@ createHitSimplex <- function(basis) {
 		x <- basis %*% x # change of basis
 #		x <- correction %*% x # project onto plane
 		w <- 1/3 + x # translation (FIXME: correct for all n?)
-		allBounds <- min(sapply(w, function(wi) { wi >= 0 && wi <= 1 }))
-		W <- sum(w)
-		sumBounds <- W > (1 - EPSILON) && W < (1 + EPSILON)
+		allBounds <- min(sapply(w, function(wi) { wi >= 0 }))
+		sumBounds <- min(c(w[1] + w[2] <= 1, w[1] + w[3] <= 1, w[2] + w[3] <= 1))
 		allBounds && sumBounds
 	}
 }
