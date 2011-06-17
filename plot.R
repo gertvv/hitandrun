@@ -84,6 +84,7 @@ randDir <- function(n) {
 
 # x0: starting point; niter: number of iterations; bound: bounding box function; hit: hit determination function.
 har <- function(x0, niter, bound, hit) {
+	stopifnot(as.logical(hit(x0)))
 	misses <- 0
 	x <- as.list(rep(0, niter))
 	n <- length(x0)
@@ -91,13 +92,17 @@ har <- function(x0, niter, bound, hit) {
 	for (i in 2:niter) {
 		d <- randDir(n) # random direction
 		bounds <- bound(x[[i-1]], d)
+		# print(paste("Iteration", i, "x=", paste(x[[i-1]], collapse=","), "d=", paste(d, collapse=",")))
 		wasHit <- FALSE
 		while (!wasHit) {
 			l <- runif(1, bounds[1], bounds[2])[1] # random distance
 			xN <- x[[i-1]] + l * d
+			# print(paste("b=", paste(bounds, collapse=",")))
+			# print(paste("l=", paste(l, collapse=","), "xN=", paste(xN, collapse=",")))
 			if (hit(xN)) {
 				x[[i]] <- xN
 				wasHit <- TRUE
+				# print("HIT")
 			} else {
 				misses <- misses + 1
 				x[[i]] <- x[[i-1]]
@@ -108,6 +113,7 @@ har <- function(x0, niter, bound, hit) {
 				if (l < 0) {
 					bounds[1] <- l
 				}
+				# print(paste("MISS ", i))
 			}
 		}
 	}
@@ -152,8 +158,8 @@ createBoundBox <- function(basis, extreme=diag(n)) {
 			min(sapply(1:(n-1), function(i) { max((lb[i] - x[i]) / d[i], (ub[i] - x[i]) / d[i]) }))
 		)
 	}
-	# starting point calculated under assumed convexity
-	start <- sapply(1:(n-1), function(i) { (lb[i] + ub[i]) / 2 })
+	# starting point (origin)
+	start <- apply(extreme, 1, sum)
 	list(bound=boundFn, start=start)
 }
 
@@ -208,9 +214,10 @@ lowerRatioConstraint <- function(n, w1, w2, x) {
 	t(a)
 }
 
-n <- 3
+n <- 30
 on <- basis(n)
-hit <- createHitSimplex(on)#, rbind(upperRatioConstraint(n, 3, 1, 1.2), lowerRatioConstraint(n, 3, 1, 1/1.2)))
+#hit <- createHitSimplex(on, rbind(upperRatioConstraint(n, 3, 1, 1.2), lowerRatioConstraint(n, 3, 1, 1/1.2)))
+hit <- createHitSimplex(on)
 bound <- createBoundBox(on)
 samples <- har(bound$start, 1000, bound$bound, hit)
 result <- transformResult(on, samples[[1]])
