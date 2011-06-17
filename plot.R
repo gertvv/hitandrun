@@ -33,10 +33,12 @@ testTransformation <- function() {
 	triangles3d(c(2/3,-1/3,-1/3), c(-1/3,2/3,-1/3), c(-1/3,-1/3,2/3), alpha=0.3)
 
 	# draw the basis
+	basis <- matrix(c(1,0,-1,0,1,-1), ncol=2)
 	drawVector((1/3)*basis[,1])
 	drawVector((1/3)*basis[,2])
 
 	# draw the orthonormal basis
+	on <- orthonormalization(basis, basis=F, norm=T)
 	drawVector((1/3)*on[,1], color="red", alpha=1)
 	drawVector((1/3)*on[,2], color="red", alpha=1)
 
@@ -139,14 +141,20 @@ inverse <- function(mat) {
 createBoundBox <- function(basis, extreme=diag(n)) {
 	n <- dim(basis)[1]
 	extreme <- t(basis) %*% (extreme - 1/n) # extreme points
+	# upper and lower bounds for each dimension in the (n-1) basis
 	lb <- apply(extreme, 1, min)
 	ub <- apply(extreme, 1, max)
-	function(x, d) {
+	# bounding function for the length of the hit line
+	# x: current position; d: direction of move.
+	boundFn <- function(x, d) {
 		c(
 			max(sapply(1:(n-1), function(i) { min((lb[i] - x[i]) / d[i], (ub[i] - x[i]) / d[i]) })),
 			min(sapply(1:(n-1), function(i) { max((lb[i] - x[i]) / d[i], (ub[i] - x[i]) / d[i]) }))
 		)
 	}
+	# starting point calculated under assumed convexity
+	start <- sapply(1:(n-1), function(i) { (lb[i] + ub[i]) / 2 })
+	list(bound=boundFn, start=start)
 }
 
 # create basis for (translated) n-dim simplex
@@ -155,9 +163,54 @@ basis <- function(n) {
 	orthonormalization(b, basis=F, norm=T)
 }
 
+transformResult <- function(basis, samples) {
+	n <- dim(basis)[1]
+	t(sapply(samples, function(x) { basis %*% x })) + 1/n
+}
+
+# create the constraint that w1 >= w2 in an n-dim space
+ordinalConstraint <- function(n, w1, w2) {
+	a <- rep(0, n + 1)
+	a[w1] <- -1
+	a[w2] <- 1
+	t(a)
+}
+
+# create the constraint that w1 <= x
+upperBoundConstraint <- function(n, w1, x) {
+	a <- rep(0, n + 1)
+	a[w1] <- 1
+	a[n + 1] <- x
+	t(a)
+}
+
+# create the constraint that w1 >= x
+lowerBoundConstraint <- function(n, w1, x) {
+	a <- rep(0, n + 1)
+	a[w1] <- -1
+	a[n + 1] <- -x
+	t(a)
+}
+
+# create the constraint that w1/w2 <= x
+upperRatioConstraint <- function(n, w1, w2, x) {
+	a <- rep(0, n + 1)
+	a[w1] <- 1
+	a[w2] <- -x
+	t(a)
+}
+
+# create the constraint that x <= w1/w2
+lowerRatioConstraint <- function(n, w1, w2, x) {
+	a <- rep(0, n + 1)
+	a[w1] <- -1
+	a[w2] <- x
+	t(a)
+}
+
 n <- 3
 on <- basis(n)
-hit <- createHitSimplex(on)
+hit <- createHitSimplex(on)#, rbind(upperRatioConstraint(n, 3, 1, 1.2), lowerRatioConstraint(n, 3, 1, 1/1.2)))
 bound <- createBoundBox(on)
-samples <- har(rep(0, n - 1), 1000, bound, hit)
-result <- t(sapply(samples[[1]], function(x) { on %*% x })) + 1/n
+samples <- har(bound$start, 1000, bound$bound, hit)
+result <- transformResult(on, samples[[1]])
