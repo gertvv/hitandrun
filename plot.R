@@ -178,19 +178,15 @@ findExtremePoints <- function(constr) {
 
 	# because lp_solve assumes vars to be non-negative, split each dimension:
 	# x_i = y_{2i-1} - y_{2i}
-	split <- function(row) {
-		as.vector(sapply(row, function(x) { c(x, -x) }))
-	}
-	a <- matrix(apply(constr$constr[,1:n-1], 1, split), ncol=2*(n-1), byrow=TRUE)
-	a <- cbind(a, constr$constr[,n])
-
-	# each variable is coded as two, give them
+	# thus each dimension is coded as the difference of two variables, give them
 	obj <- function(i) {
 		obj <- rep(0, 2 * n - 1)
 		obj[2 * i - 1] <- 1
 		obj[2 * i] <- -1
 		obj
 	}
+	mat <- t(sapply(1:(n-1), obj))
+	a <- constr$constr %*% rbind(mat, c(rep(0, 2 * n - 2), 1))
 
 	# for each of the (n-1) dimensions, solve 2 LPs to find the min/max
 	findExtreme <- function(dir) {
@@ -199,7 +195,7 @@ findExtremePoints <- function(constr) {
 		}
 	}
 	rawExtremes <- cbind(sapply(1:(n-1), findExtreme("min")), sapply(1:(n-1), findExtreme("max")))
-	t(sapply(1:(n-1), obj)) %*% rawExtremes
+	mat %*% rawExtremes
 }
 
 # create a bounding box given constraints in (n-1)
