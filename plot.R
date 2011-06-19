@@ -71,9 +71,7 @@ sampleHyperSphere <- function(dim) {
 }
 
 # generate a random direction in n-dimensional space
-# FIXME: implement for n != 2
 randDir <- function(n) {
-	#stopifnot(n == 2)
 	if (n == 2) {
 		d <- runif(1, 0, 2*pi)[1] # random direction
 		c(cos(d), sin(d)) # transform to x/y
@@ -120,20 +118,51 @@ har <- function(x0, niter, bound, hit) {
 	list(x, misses)
 }
 
-# hit calculation for (n-1)-dimensional simplex
+# translate the n-dimensional constraints to the (n-1)-dimensional space
 # basis: orthonormal basis for the (n-1)-dimensional simplex in n-dimensional space
-createHitSimplex <- function(basis, constr=NULL) {
+# constr: additional constraints
+createConstraintFormulation <- function(basis, userConstr=NULL) {
 	n <- dim(basis)[1]
-	a1 <- diag(rep(-1, n)) # -1*w[i] <= 0
-	a2 <- 1 + a1 # (\sum w[j]) - w[i] <= 1
-	a <- cbind(rbind(a1, a2), c(rep(0, n), rep(1, n)))
+
+	# basic constraints defining the n-dimensional simplex
+	constr1 <- diag(rep(-1, n)) # -1*w[i] <= 0
+	rhs1 <- rep(0, n)
+	constr2 <- 1 + constr1 # (\sum w[j]) - w[i] <= 1
+	rhs2 <- rep(1, n)
+	constr <- rbind(constr1, constr2)
+	rhs <- c(rhs1, rhs2)
+
+	# user constraints
 	if (!is.null(constr)) {
-		a <- rbind(a, constr)
+		constr <- rbind(constr, userConstr[, 1:n])
+		rhs <- c(rhs, userConstr[, n + 1])
 	}
+
+	# add one extra element to vectors in each basis (homogenous coordinate representation)
+	basis <- rbind(cbind(basis, rep(0, n)), c(rep(0, n - 1), 1))
+	# create translation matrix (using homogenous coordinates)
+	translation <- rbind(cbind(diag(n), rep(1/n, n)), c(rep(0, n), 1))
+	# successively apply basis transformation, translation and then constraint calculation
+	constr <- cbind(constr, 0) %*% translation %*% basis
+
+	# add the constraint that the homogenous coordinate equals 1
+	m <- dim(constr)[1]
+	constr <- rbind(constr, c(rep(0, n-1), 1))
+	rhs <- c(rhs, 1)
+
+	# give directions
+	dir <- c(rep("<=", m), "=")
+
+	list(constr=constr, rhs=rhs, dir=dir)
+}
+
+# hit calculation for (n-1)-dimensional simplex
+# constr: constraint formulation in (n-1)-dimensional space
+createHitSimplex <- function(constr) {
+	a <- cbind(a$constr, a$rhs)
 	function(x) {
-		x <- basis %*% x # change of basis
-		w <- rbind(1/n + x, -1) # translation
-		min(a %*% w <= 0)
+		x <- c(x, 1, -1) # add homogenous coordinate and RHS
+		min(a %*% x <= 0)
 	}
 }
 
@@ -143,10 +172,39 @@ inverse <- function(mat) {
 	d$v%*%diag(1/d$d)%*%t(d$u)
 }
 
-# create a bounding box given a (n-1) basis and extreme points in R^n
-createBoundBox <- function(basis, extreme=diag(n)) {
-	n <- dim(basis)[1]
-	extreme <- t(basis) %*% (extreme - 1/n) # extreme points
+findExtremePoints <- function(constr) {
+	n <- dim(constr$constr)[2]
+
+	# because lp_solve assumes vars to be non-negative, split each dimension:
+	# x_i = y_{2i-1} - y_{2i}
+	split <- function(row) {
+		as.vector(sapply(row, function(x) { c(x, -x) }))
+	}
+	a <- matrix(apply(constr$constr[,1:n-1], 1, split), ncol=2*(n-1), byrow=TRUE)
+	a <- cbind(a, constr$constr[,n])
+
+	# each variable is coded as two, give them
+	obj <- function(i) {
+		obj <- rep(0, 2 * n - 1)
+		obj[2 * i - 1] <- 1
+		obj[2 * i] <- -1
+		obj
+	}
+
+	# for each of the (n-1) dimensions, solve 2 LPs to find the min/max
+	findExtreme <- function(dir) {
+		function(i) {
+			lp(dir, obj(i), a, constr$dir, constr$rhs)$solution
+		}
+	}
+	rawExtremes <- cbind(sapply(1:(n-1), findExtreme("min")), sapply(1:(n-1), findExtreme("max")))
+	t(sapply(1:(n-1), obj)) %*% rawExtremes
+}
+
+# create a bounding box given constraints in (n-1)
+createBoundBox <- function(constr) {
+	n <- dim(constr$constr)[2]
+	extreme <- findExtremePoints(constr)
 	# upper and lower bounds for each dimension in the (n-1) basis
 	lb <- apply(extreme, 1, min)
 	ub <- apply(extreme, 1, max)
@@ -159,7 +217,7 @@ createBoundBox <- function(basis, extreme=diag(n)) {
 		)
 	}
 	# starting point (origin)
-	start <- apply(extreme, 1, sum)
+	start <- (1/(2*(n-1))) * apply(extreme, 1, sum)
 	list(bound=boundFn, start=start)
 }
 
@@ -214,10 +272,11 @@ lowerRatioConstraint <- function(n, w1, w2, x) {
 	t(a)
 }
 
-n <- 30
+n <- 3
 on <- basis(n)
-#hit <- createHitSimplex(on, rbind(upperRatioConstraint(n, 3, 1, 1.2), lowerRatioConstraint(n, 3, 1, 1/1.2)))
-hit <- createHitSimplex(on)
-bound <- createBoundBox(on)
+a <- createConstraintFormulation(on)
+#a <- createConstraintFormulation(on, rbind(upperRatioConstraint(n, 3, 1, 1.2), lowerRatioConstraint(n, 3, 1, 1/1.2), lowerBoundConstraint(n, 2, 0.2)))
+hit <- createHitSimplex(a)
+bound <- createBoundBox(a)
 samples <- har(bound$start, 1000, bound$bound, hit)
 result <- transformResult(on, samples[[1]])
