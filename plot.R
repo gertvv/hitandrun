@@ -22,6 +22,7 @@ plotWeights <- function(W) {
 ## (MOVE TO OTHER FILE)
 library('rgl')
 library('far') # for orthonormalization
+library('lpSolve') # to solve 2(n-1) LPs
 
 drawVector <- function(v, color="black", alpha=0.6) {
 	lines3d(c(0, v[1]), c(0, v[2]), c(0, v[3]), color=color, alpha=alpha)
