@@ -1,0 +1,38 @@
+source('transformSimplex.R')
+source('bound.R')
+source('sample.R')
+
+# sample weights from an (n-1) simplex in n-dimensional space, subject to the
+# given constraints.
+# N: number of desired samples
+# n: number of dimensions
+# constr: optional matrix of additional constraints
+# algo: desired algorithm (default "har")
+simplex.sample <- function(N, n, constr=NULL, algo="har") {
+	if (algo == "simplex") { # sample in n-dim space
+		hit <- function(x) { TRUE }
+		if (!is.null(constr)) {
+			hit <- function(x) {
+				x <- c(x, -1) # add RHS
+				min(constr %*% x <= 0)
+			}
+		}
+		result <- simplexReject(N, n, hit)
+		samples <- t(sapply(result$samples, function(x) { x }))
+		return(list(samples=samples, miss=result$miss))
+	} else { # sample in (n-1)-dim space
+		basis <- simplex.basis(n)
+		a <- simplex.createConstraints(basis, constr)
+		hit <- simplex.createHit(a)
+		bound <- createBoundBox(a)
+		result <- NULL
+		if (algo == "har") {
+			result <- har(bound$start, N, bound$bound, hit)
+		} else if (algo == "bound") {
+			result <- boundingBoxReject(N, bound$lb, bound$ub, hit)
+		}
+		samples <- simplex.transformResult(basis, result$samples)
+		return(list(samples=samples, miss=result$miss))
+	}
+	stop(paste("Algorithm", algo, "not supported"))
+}

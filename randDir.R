@@ -16,13 +16,12 @@ sampleHyperSphere <- function(dim) {
   normalize2(x);
 }
 
-sampleHyperBall <- function(dim) {
-  x <-  sampleHyperSphere(dim);
-  x*runif(1);
-}
-
-sampleSimplexDirection <- function(dim) {
-  x <- sampleHyperBall(dim-1);
-  append(x, 0-sum(x));
-  normalize2(x);
+# generate a random direction in n-dimensional space
+randDir <- function(n) {
+	if (n == 2) {
+		d <- runif(1, 0, 2*pi)[1] # random direction
+		c(cos(d), sin(d)) # transform to x/y
+	} else {
+		sampleHyperSphere(as.numeric(n))
+	}
 }
