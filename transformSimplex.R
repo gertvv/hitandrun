@@ -55,7 +55,7 @@ simplex.createConstraints <- function(basis, userConstr=NULL) {
 # hit calculation for (n-1)-dimensional simplex
 # constr: constraint formulation in (n-1)-dimensional space
 simplex.createHit <- function(constr) {
-	a <- cbind(a$constr, a$rhs)
+	a <- cbind(constr$constr, constr$rhs)
 	function(x) {
 		x <- c(x, 1, -1) # add homogenous coordinate and RHS
 		min(a %*% x <= 0)
