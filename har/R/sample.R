@@ -1,5 +1,3 @@
-source('randDir.R')
-
 # x0: starting point; niter: number of iterations; bound: bounding box function; hit: hit determination function.
 har <- function(x0, niter, bound, hit) {
 	stopifnot(as.logical(hit(x0)))

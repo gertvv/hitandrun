@@ -1,5 +1,3 @@
-library('lpSolve') # to solve 2(n-1) LPs
-
 findExtremePoints <- function(constr) {
 	n <- dim(constr$constr)[2]
 

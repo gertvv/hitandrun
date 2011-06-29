@@ -1,7 +1,3 @@
-# Transform
-
-library('far') # for orthonormalization
-
 # create basis for (translated) n-dim simplex
 simplex.basis <- function(n) {
 	b <- rbind(diag(n-1), rep(-1, n-1))

@@ -5,8 +5,7 @@ simplex.plot <- function(W) {
 	triangles3d(c(0,0,1), c(0,1,0), c(1,0,0), alpha=0.3)
 }
 
-source('sampleSimplex.R')
-source('constraint.R')
+library(har)
 
 n <- 3
 constr <- rbind(upperRatioConstraint(n, 3, 1, 1.2), lowerRatioConstraint(n, 3, 1, 1/1.2), lowerBoundConstraint(n, 2, 0.2))

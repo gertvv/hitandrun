@@ -1,7 +1,3 @@
-source('transformSimplex.R')
-source('bound.R')
-source('sample.R')
-
 # sample weights from an (n-1) simplex in n-dimensional space, subject to the
 # given constraints.
 # N: number of desired samples
