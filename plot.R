@@ -104,7 +104,6 @@ har <- function(x0, niter, bound, hit) {
 				# print("HIT")
 			} else {
 				misses <- misses + 1
-				x[[i]] <- x[[i-1]]
 				# update bounds
 				if (l > 0) {
 					bounds[2] <- l
@@ -113,6 +112,47 @@ har <- function(x0, niter, bound, hit) {
 					bounds[1] <- l
 				}
 				# print(paste("MISS ", i))
+			}
+		}
+	}
+	list(x, misses)
+}
+
+# bounding box rejection sampling
+boundingBoxReject <- function(niter, lb, ub, hit) {
+	misses <- 0
+	x <- as.list(rep(0, niter))
+	n <- length(lb)
+	d <- ub - lb # pre-calculate for use in loop
+	for (i in 1:niter) {
+		wasHit <- FALSE
+		while (!wasHit) {
+			xN <- lb + d * runif(n)
+			if (hit(xN)) {
+				x[[i]] <- xN
+				wasHit <- TRUE
+			} else {
+				misses <- misses + 1
+			}
+		}
+	}
+	list(x, misses)
+}
+
+# simplex rejection sampling
+simplexReject <- function(niter, basis, hit) {
+	misses <- 0
+	x <- as.list(rep(0, niter))
+	n <- dim(basis)[1]
+	for (i in 1:niter) {
+		wasHit <- FALSE
+		while (!wasHit) {
+			xN <- t(basis) %*% as.vector(sampleUniform(n, 1))
+			if (hit(xN)) {
+				x[[i]] <- xN
+				wasHit <- TRUE
+			} else {
+				misses <- misses + 1
 			}
 		}
 	}
@@ -215,7 +255,7 @@ createBoundBox <- function(constr) {
 	}
 	# starting point (origin)
 	start <- (1/(2*(n-1))) * apply(extreme, 1, sum)
-	list(bound=boundFn, start=start)
+	list(bound=boundFn, start=start, lb=lb, ub=ub)
 }
 
 # create basis for (translated) n-dim simplex
@@ -271,9 +311,11 @@ lowerRatioConstraint <- function(n, w1, w2, x) {
 
 n <- 3
 on <- basis(n)
-a <- createConstraintFormulation(on)
-#a <- createConstraintFormulation(on, rbind(upperRatioConstraint(n, 3, 1, 1.2), lowerRatioConstraint(n, 3, 1, 1/1.2), lowerBoundConstraint(n, 2, 0.2)))
+#a <- createConstraintFormulation(on)
+a <- createConstraintFormulation(on, rbind(upperRatioConstraint(n, 3, 1, 1.2), lowerRatioConstraint(n, 3, 1, 1/1.2), lowerBoundConstraint(n, 2, 0.2)))
 hit <- createHitSimplex(a)
 bound <- createBoundBox(a)
 samples <- har(bound$start, 1000, bound$bound, hit)
+#samples <- boundingBoxReject(1000, bound$lb, bound$ub, hit)
+#samples <- simplexReject(1000, on, hit)
 result <- transformResult(on, samples[[1]])
