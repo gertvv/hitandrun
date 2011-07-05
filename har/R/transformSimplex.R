@@ -16,16 +16,12 @@ simplex.transformResult <- function(basis, samples) {
 simplex.createConstraints <- function(basis, userConstr=NULL) {
 	n <- dim(basis)[1]
 
-	# basic constraints defining the n-dimensional simplex
-	constr1 <- diag(rep(-1, n)) # -1*w[i] <= 0
-	rhs1 <- rep(0, n)
-	constr2 <- 1 + constr1 # (\sum w[j]) - w[i] <= 1
-	rhs2 <- rep(1, n)
-	constr <- rbind(constr1, constr2)
-	rhs <- c(rhs1, rhs2)
+	# basic constraints defining the (n-1)-dimensional simplex
+	constr <- diag(rep(-1, n)) # -1*w[i] <= 0
+	rhs <- rep(0, n)
 
 	# user constraints
-	if (!is.null(constr)) {
+	if (!is.null(userConstr)) {
 		constr <- rbind(constr, userConstr[, 1:n])
 		rhs <- c(rhs, userConstr[, n + 1])
 	}
