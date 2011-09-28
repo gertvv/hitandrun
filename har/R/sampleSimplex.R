@@ -3,8 +3,8 @@
 # N: number of desired samples
 # n: number of dimensions
 # constr: optional matrix of additional constraints
-# algo: desired algorithm (default "har")
-simplex.sample <- function(N, n, constr=NULL, algo="har") {
+# algo: desired algorithm (default "adaptiveHar")
+simplex.sample <- function(N, n, constr=NULL, algo="adaptiveHar") {
 	if (algo == "simplex") { # sample in n-dim space
 		hit <- function(x) { TRUE }
 		if (!is.null(constr)) {
@@ -22,8 +22,12 @@ simplex.sample <- function(N, n, constr=NULL, algo="har") {
 		hit <- simplex.createHit(a)
 		bound <- createBoundBox(a)
 		result <- NULL
-		if (algo == "har") {
-			result <- har(bound$start, N, bound$bound, hit)
+		if (algo == "adaptiveHar") {
+			result <- adaptiveHar(bound$start, N, bound$bound, hit)
+		} else if (algo == "nonAdaptiveHar") {
+			result <- nonAdaptiveHar(bound$start, N, bound$bound, hit)
+		} else if (algo == "gibbs") {
+			result <- gibbs(bound$start, N, bound$bound, hit)
 		} else if (algo == "bound") {
 			result <- boundingBoxReject(N, bound$lb, bound$ub, hit)
 		}

@@ -1,5 +1,5 @@
 # x0: starting point; niter: number of iterations; bound: bounding box function; hit: hit determination function.
-har <- function(x0, niter, bound, hit) {
+adaptiveHar <- function(x0, niter, bound, hit) {
 	stopifnot(as.logical(hit(x0)))
 	misses <- 0
 	x <- as.list(rep(0, niter))
@@ -31,6 +31,58 @@ har <- function(x0, niter, bound, hit) {
 				# print(paste("MISS ", i))
 			}
 		}
+	}
+	list(samples=x, miss=misses)
+}
+
+# x0: starting point; niter: number of iterations; bound: bounding box function; hit: hit determination function.
+nonAdaptiveHar <- function(x0, niter, bound, hit) {
+	stopifnot(as.logical(hit(x0)))
+	misses <- 0
+	x <- as.list(rep(0, niter))
+	n <- length(x0)
+	x[[1]] <- x0
+	for (i in 2:niter) {
+		d <- randDir(n) # random direction
+		bounds <- bound(x[[i-1]], d)
+		l <- runif(1, bounds[1], bounds[2])[1] # random distance
+		xN <- x[[i-1]] + l * d
+		if (hit(xN)) {
+			x[[i]] <- xN
+		} else {
+			x[[i]] <- x[[i-1]]
+			misses <- misses + 1
+		}
+	}
+	list(samples=x, miss=misses)
+}
+
+# x0: starting point; niter: number of iterations; bound: bounding box function; hit: hit determination function.
+gibbs <- function(x0, niter, bound, hit) {
+	stopifnot(as.logical(hit(x0)))
+	misses <- 0
+	x <- as.list(rep(0, niter))
+	n <- length(x0)
+	x[[1]] <- x0
+	# print(x0)
+	for (i in 2:niter) {
+		xN <- x[[i - 1]]
+		for (j in 1:n) {
+			d <- rep(0, n)
+			d[j] <- 1 # update the i-th dimension
+			# print(paste("x=", xN))
+			# print(paste("d=", d))
+			bounds <- bound(xN, d)
+			# print(paste("b=", paste(bounds, collapse=",")))
+			l <- runif(1, bounds[1], bounds[2])[1] # random distance
+			xM <- xN + l * d
+			if (hit(xM)) {
+				xN <- xM
+			} else {
+				misses <- misses + 1
+			}
+		}
+		x[[i]] <- xN
 	}
 	list(samples=x, miss=misses)
 }

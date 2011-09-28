@@ -1,5 +1,7 @@
 \name{har}
-\alias{har}
+\alias{adaptiveHar}
+\alias{nonAdaptiveHar}
+\alias{gibbs}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 "Hit and Run" sampler implementation
@@ -8,7 +10,9 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-har(x0, niter, bound, hit)
+adaptiveHar(x0, niter, bound, hit)
+nonAdaptiveHar(x0, niter, bound, hit)
+gibbs(x0, niter, bound, hit)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -44,38 +48,6 @@ Gert van Valkenhoef
 ##-- ==>  Define data, use random,
 ##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (x0, niter, bound, hit) 
-{
-    stopifnot(as.logical(hit(x0)))
-    misses <- 0
-    x <- as.list(rep(0, niter))
-    n <- length(x0)
-    x[[1]] <- x0
-    for (i in 2:niter) {
-        d <- randDir(n)
-        bounds <- bound(x[[i - 1]], d)
-        wasHit <- FALSE
-        while (!wasHit) {
-            l <- runif(1, bounds[1], bounds[2])[1]
-            xN <- x[[i - 1]] + l * d
-            if (hit(xN)) {
-                x[[i]] <- xN
-                wasHit <- TRUE
-            }
-            else {
-                misses <- misses + 1
-                if (l > 0) {
-                  bounds[2] <- l
-                }
-                if (l < 0) {
-                  bounds[1] <- l
-                }
-            }
-        }
-    }
-    list(samples = x, miss = misses)
-  }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
