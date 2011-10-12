@@ -1,11 +1,15 @@
 # x0: starting point; niter: number of iterations; bound: bounding box function; hit: hit determination function.
-adaptiveHar <- function(x0, niter, bound, hit) {
+adaptiveHar <- function(x0, niter, bound, hit, printIters=-1) {
 	stopifnot(as.logical(hit(x0)))
 	misses <- 0
 	x <- as.list(rep(0, niter))
 	n <- length(x0)
 	x[[1]] <- x0
 	for (i in 2:niter) {
+          if (printIters > 0 && i %% printIters == 0) {
+            cat(i, fill = TRUE)
+          }
+
 		d <- randDir(n) # random direction
 		bounds <- bound(x[[i-1]], d)
 		# print(paste("Iteration", i, "x=", paste(x[[i-1]], collapse=","), "d=", paste(d, collapse=",")))
@@ -36,13 +40,17 @@ adaptiveHar <- function(x0, niter, bound, hit) {
 }
 
 # x0: starting point; niter: number of iterations; bound: bounding box function; hit: hit determination function.
-nonAdaptiveHar <- function(x0, niter, bound, hit) {
+nonAdaptiveHar <- function(x0, niter, bound, hit, printIters=-1) {
 	stopifnot(as.logical(hit(x0)))
 	misses <- 0
 	x <- as.list(rep(0, niter))
 	n <- length(x0)
 	x[[1]] <- x0
 	for (i in 2:niter) {
+          if (printIters > 0 && i %% printIters == 0) {
+            cat(i, fill = TRUE)
+          }
+
 		d <- randDir(n) # random direction
 		bounds <- bound(x[[i-1]], d)
 		l <- runif(1, bounds[1], bounds[2])[1] # random distance
@@ -58,7 +66,7 @@ nonAdaptiveHar <- function(x0, niter, bound, hit) {
 }
 
 # x0: starting point; niter: number of iterations; bound: bounding box function; hit: hit determination function.
-gibbs <- function(x0, niter, bound, hit) {
+gibbs <- function(x0, niter, bound, hit, printIters=-1) {
 	stopifnot(as.logical(hit(x0)))
 	misses <- 0
 	x <- as.list(rep(0, niter))
@@ -66,6 +74,9 @@ gibbs <- function(x0, niter, bound, hit) {
 	x[[1]] <- x0
 	# print(x0)
 	for (i in 2:niter) {
+          if (printIters > 0 && i %% printIters == 0) {
+            cat(i, fill = TRUE)
+          }          
 		xN <- x[[i - 1]]
 		for (j in 1:n) {
 			d <- rep(0, n)
@@ -88,12 +99,15 @@ gibbs <- function(x0, niter, bound, hit) {
 }
 
 # bounding box rejection sampling
-boundingBoxReject <- function(niter, lb, ub, hit) {
+boundingBoxReject <- function(niter, lb, ub, hit, printIters=-1) {
 	misses <- 0
 	x <- as.list(rep(0, niter))
 	n <- length(lb)
 	d <- ub - lb # pre-calculate for use in loop
 	for (i in 1:niter) {
+          if (printIters > 0 && i %% printIters == 0) {
+            cat(i, fill = TRUE)
+          }          
 		wasHit <- FALSE
 		while (!wasHit) {
 			xN <- lb + d * runif(n)
@@ -123,10 +137,13 @@ simplex.baseSample <- function(n, N) {
 }
 
 # simplex rejection sampling
-simplexReject <- function(niter, n, hit) {
+simplexReject <- function(niter, n, hit, printIters=-1) {
 	misses <- 0
 	x <- as.list(rep(0, niter))
 	for (i in 1:niter) {
+          if (printIters > 0 && i %% printIters == 0) {
+            cat(i, fill = TRUE)
+          }          
 		wasHit <- FALSE
 		while (!wasHit) {
 			xN <- simplex.baseSample(n, 1)
