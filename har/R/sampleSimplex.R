@@ -25,10 +25,10 @@ simplex.sample <- function(N, n, constr=NULL, algo="adaptiveHar", startingPoint 
   } else { # sample in (n-1)-dim space
     basis <- simplex.basis(n)
     a <- simplex.createConstraints(basis, constr)
-    hit <- simplex.createHit(a)
-    bound <- createBoundBox(a)
+    hit <- function(x) { TRUE }
+    bound <- simplex.createBoundBox(a)
     if (!is.null(startingPoint)) {
-      startingPoint = t(basis) %*% (startingPoint - (1/n))
+      startingPoint <- t(basis) %*% (startingPoint - (1/n))
     }
     result <- NULL
     if (algo == "adaptiveHar") {
