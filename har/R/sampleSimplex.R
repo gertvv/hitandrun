@@ -1,3 +1,51 @@
+# Create a sampler that samples weights from an (n-1) simplex in n-dim space,
+# subject to the given constraints.
+# n: number of dimensions
+# constr: optional matrix of additional constraints
+# algo: desired algorithm (default "exactHar")
+# startingPoint: NULL or starting point for the chains
+# PRECOND: startingPoint is null or has length n
+# PRECOND: startingPoint is null or adheres to the constraints
+simplex.createSampler <- function(n, constr=NULL, algo="har", startPoint=NULL) {
+	stopifnot(is.null(startPoint) || length(startPoint) == n)
+
+	# Initialize (n-1) dimensional sampling space
+	basis <- simplex.basis(n)
+	a <- simplex.createConstraints(basis, constr)
+	hit <- function(x) { TRUE } # we do exact boundary intersections
+	bound <- simplex.createBoundBox(a)
+
+	# Set up and verify startPoint
+	if (is.null(startPoint)) {
+		startPoint <- bound$start
+	} else {
+		startPoint <- t(basis) %*% (startPoint - (1/n))
+	}
+	stopifnot(simplex.createHit(a)(startPoint))
+
+	# Create sampling function
+	stopifnot(algo %in% c("har", "gibbs"))
+	sampler <- NULL
+	if (algo == "har") {
+		sampler <- function(seed, N) {
+			nonAdaptiveHar(seed, N, bound$bound, hit)
+		}
+	} else {
+		sampler <- function(seed, N) {
+			gibbs(seed, N, bound$bound, hit)
+		}
+	}
+
+	# Create chain-generating function
+	function(N) {
+		result <- sampler(startPoint, N + 1)
+		lastPoint <- unlist(tail(result$samples, 1))
+		assign("startPoint", lastPoint, envir=parent.env(environment()))
+		samples <- simplex.transformResult(basis, tail(result$samples, -1))
+		return(list(samples=samples, miss=result$miss))
+	}
+}
+
 ## sample weights from an (n-1) simplex in n-dimensional space, subject to the
 ## given constraints.
 ## N: number of desired samples
