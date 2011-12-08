@@ -19,13 +19,16 @@ inline double *get(Matrix *m, int i, int j) {
 
 /**
  * Generate a random point on the n-dimensional unit sphere.
+ * This is done by generating n independent normal variates and then
+ * normalizing.
  */
 void randDir(double *d, int n) {
 	int const inc1 = 1;
 	for (int i = 0; i < n; ++i) {
-		d[i] = rnorm(0.0, 1.0);
+		d[i] = norm_rand();
 	}
-	F77_CALL(dnrm2)(&n, d, &inc1);
+	double f = 1 / F77_CALL(dnrm2)(&n, d, &inc1);
+	F77_CALL(dscal)(&n, &f, d, &inc1);
 }
 
 /**
@@ -71,8 +74,8 @@ void bound(Matrix *constr, double *rhs, double *x, double *d, double *l) {
 	double a[constr->nRow];
 	memcpy(a, rhs, constr->nRow * sizeof(double));
 	F77_CALL(dgemv)(&trans, &(constr->nRow), &(constr->nCol),
-		&one, constr->data, &(constr->nRow), x, &inc1,
-		&negone, a, &inc1); // a := 1Ax + -1a (= b - Ax)
+		&negone, constr->data, &(constr->nRow), x, &inc1,
+		&one, a, &inc1); // a := -1Ax + 1a (= b - Ax)
 
 	double c[constr->nRow];
 	F77_CALL(dgemv)(&trans, &(constr->nRow), &(constr->nCol),
@@ -87,12 +90,12 @@ void bound(Matrix *constr, double *rhs, double *x, double *d, double *l) {
 	// ]
 	l[0] = l[1] = NA_REAL;
 	for (int i = 0; i < constr->nRow; ++i) {
-		if (c[i] < 0) {
+		if (c[i] < 0.0) {
 			double t = a[i] / c[i];
 			if (ISNA(l[0]) || t > l[0]) {
 				l[0] = t;
 			}
-		} else if (c[i] > 0) {
+		} else if (c[i] > 0.0) {
 			double t = a[i] / c[i];
 			if (ISNA(l[1]) || t < l[1]) {
 				l[1] = t;
@@ -100,6 +103,8 @@ void bound(Matrix *constr, double *rhs, double *x, double *d, double *l) {
 		}
 	}
 }
+
+#include <stdio.h>
 
 /**
  * Hit-and-Run sampling using exact intersections with the linear constraints.
@@ -126,7 +131,7 @@ void har(int *_n, double *_x0, int *_m, double *_constr, double *rhs,
 	Matrix result = { _result, niter / thin, n + 1 };
 
 	// Check arguments for sanity
-	if (_x0[n] != 1) {
+	if (_x0[n] != 1.0) {
 		error("The (n + 1)-st component of x0 must be 1");
 	}
 	if (niter % thin != 0) {
@@ -142,16 +147,18 @@ void har(int *_n, double *_x0, int *_m, double *_constr, double *rhs,
 	d[n] = 0; // homogeneous coordinates -- final direction component always 0.
 	double l[2];
 
+	GetRNGstate(); // enable use of RNGs
+
 	for (int i = 0; i < niter; ++i) {
 		randDir(d, n); // generate random direction d
 		bound(&constr, rhs, x, d, l); // calculate bounds l
-		if (ISNA(l[0]) || ISNA(l[1])) {
-			error("Bounding function gave NA bounds");
+		if (!R_FINITE(l[0]) || !R_FINITE(l[1])) {
+			error("Bounding function gave NA bounds [%f, %f]", l[0], l[1]);
 		}
 		if (l[0] == l[1]) { // FIXME: is this an error?
 			error("Bounding function gave empty interval");
 		}
-		double v = runif(l[0], l[1]);
+		double v = l[0] + unif_rand() * (l[1] - l[0]);
 		F77_CALL(daxpy)(&nh, &v, d, &inc1, x, &inc1); // x := vd + x
 
 		if ((i + 1) % thin == 0) { // write result
@@ -160,4 +167,6 @@ void har(int *_n, double *_x0, int *_m, double *_constr, double *rhs,
 			}
 		}
 	}
+
+	PutRNGstate(); // propagate RNG state back to R (or somewhere)
 }
