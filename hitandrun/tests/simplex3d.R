@@ -1,13 +1,13 @@
 library(hitandrun)
 
 ordinalConstraints <- function(dim) {
-	t(sapply(1:(dim-1), function(i) {ordinalConstraint(dim, i, i + 1)}))
+	mergeConstraints(lapply(1:(dim-1), function(i) {ordinalConstraint(dim, i, i + 1)}))
 }
 
 n <- 3
 transform <- simplex.createTransform(n)
 constr <- simplex.createConstraints(transform, ordinalConstraints(n))
-seedPoint <- generateSeedPoint(constr, homogeneous=TRUE)
+seedPoint <- createSeedPoint(constr, homogeneous=TRUE)
 
 N <- 10000
 samples <- har(seedPoint, constr, N, 1, homogeneous=TRUE, transform=transform)

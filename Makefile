@@ -1,4 +1,4 @@
-PACKAGE=hitandrun_0.1.tar.gz
+PACKAGE=hitandrun_0.2.tar.gz
 
 $(PACKAGE): hitandrun/src/* hitandrun/R/* hitandrun/man/* hitandrun/DESCRIPTION hitandrun/NAMESPACE
 	R CMD build hitandrun

@@ -17,8 +17,12 @@ findExtremePoints <- function(constr, homogeneous=FALSE) {
 		obj[2 * i] <- -1
 		obj
 	}
-	mat <- t(sapply(1:n, obj))
-	a <- constr$constr %*% rbind(mat, c(rep(0, 2 * n - 1), 1))
+	unsplit <- t(sapply(1:n, obj))
+	mat <- unsplit
+	if (homogeneous == TRUE) { # add row to preserve homogeneous coordinate
+		mat <- rbind(unsplit, c(rep(0, 2 * n - 1), 1))
+	}
+	a <- constr$constr %*% mat
 
 	# for each of the n dimensions, solve 2 LPs to find the min/max
 	findExtreme <- function(dir) {
@@ -27,11 +31,11 @@ findExtremePoints <- function(constr, homogeneous=FALSE) {
 		}
 	}
 	rawExtremes <- cbind(sapply(1:n, findExtreme("min")), sapply(1:n, findExtreme("max")))
-	mat %*% rawExtremes
+	unsplit %*% rawExtremes
 }
 
 # generate seed point from constraints (TODO: implement multiple methods)
-generateSeedPoint <- function(constr, homogeneous=FALSE) {
+createSeedPoint <- function(constr, homogeneous=FALSE) {
 	n <- dim(constr$constr)[2]
 	if (homogeneous == TRUE) {
 		n <- n - 1
@@ -47,21 +51,11 @@ generateSeedPoint <- function(constr, homogeneous=FALSE) {
 }
 
 # create a bounding box given constraints in (n-1)
-createBoundBox <- function(constr) {
+createBoundBox <- function(constr, homogeneous=FALSE) {
 	n <- dim(constr$constr)[2]
-	extreme <- findExtremePoints(constr)
+	extreme <- findExtremePoints(constr, homogeneous)
 	# upper and lower bounds for each dimension in the (n-1) basis
 	lb <- apply(extreme, 1, min)
 	ub <- apply(extreme, 1, max)
-	# bounding function for the length of the hit line
-	# x: current position; d: direction of move.
-	boundFn <- function(x, d) {
-		c(
-			max(sapply(1:(n-1), function(i) { min((lb[i] - x[i]) / d[i], (ub[i] - x[i]) / d[i]) })),
-			min(sapply(1:(n-1), function(i) { max((lb[i] - x[i]) / d[i], (ub[i] - x[i]) / d[i]) }))
-		)
-	}
-	# starting point (origin)
-	start <- (1/(2*(n-1))) * apply(extreme, 1, sum)
-	list(bound=boundFn, start=start, lb=lb, ub=ub)
+	list(lb=lb, ub=ub, extreme=extreme)
 }

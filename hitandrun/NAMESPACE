@@ -3,12 +3,12 @@ useDynLib(hitandrun)
 
 ## Export regular function names (no dots)
 
-export(har,
+export(har, bbReject, simplex.sample,
 
-	generateSeedPoint,
+	createSeedPoint, createBoundBox,
 
 	simplex.createTransform, simplex.createConstraints,
 
 	ordinalConstraint, upperBoundConstraint, lowerBoundConstraint,
-	upperRatioConstraint, lowerRatioConstraint)
+	upperRatioConstraint, lowerRatioConstraint, mergeConstraints)
 

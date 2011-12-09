@@ -30,7 +30,7 @@ In particular, it must be true that Ax0 <= b.
   A matrix containing the generated samples as rows.
 }
 \references{
-%% ~put references to the literature/web site here ~
+	Smith, R. L. (1984) "Efficient Monte Carlo Procedures for Generating Points Uniformly Distributed over Bounded Regions". \emph{Operations Research} 32(6): 1296-1308. \href{http://dx.doi.org/10.1287/opre.32.6.1296}{doi:10.1287/opre.32.6.1296}
 }
 \author{
 Gert van Valkenhoef
@@ -38,11 +38,11 @@ Gert van Valkenhoef
 \note{
 %%  ~~further notes~~
 }
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
-\code{\link{generateSeedPoint}, \link{simplex.createTransform}, \link{simplex.createConstraints}}
+\link{har-constraint}
+\code{\link{createSeedPoint}}
+\code{\link{simplex.createTransform}}
+\code{\link{simplex.createConstraints}}
 }
 \examples{
 # constraints: x_1 >= 0, x_2 >= 0, x_1 + x_2 <= 1
@@ -66,9 +66,7 @@ stopifnot(samples >= 0)
 # Check that x_1 + x_2 <= 1
 stopifnot(samples[,1] + samples[,2] <= 1)
 
-\dontrun{
-plot(samples)
-}
+\dontrun{plot(samples)}
 
 }
 \keyword{hit-and-run}

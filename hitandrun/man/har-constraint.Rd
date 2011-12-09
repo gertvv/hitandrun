@@ -1,35 +1,50 @@
 \name{har-constraint}
+\alias{har-constraint}
 \alias{lowerBoundConstraint}
 \alias{upperBoundConstraint}
 \alias{lowerRatioConstraint}
 \alias{upperRatioConstraint}
 \alias{ordinalConstraint}
+\alias{mergeConstraints}
 \title{
 Constraint formulation utility functions
 }
 \description{
-lowerBoundConstraint(n, w1, x)
-upperBoundConstraint(n, w1, x)
-lowerRatioConstraint(n, w1, w2, x)
-upperRatioConstraint(n, w1, w2, x)
-ordinalConstraint(n, w1, w2)
+These utility functions generate constraints
 }
 \usage{
-boundingBoxReject(niter, lb, ub, hit)
+lowerBoundConstraint(n, i1, x)
+upperBoundConstraint(n, i1, x)
+lowerRatioConstraint(n, i1, i2, x)
+upperRatioConstraint(n, i1, i2, x)
+ordinalConstraint(n, i1, i2)
+mergeConstraints(...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{niter}{Desired number of samples}
-  \item{lb}{Vector of lower bounds (one for each dimension)}
-  \item{ub}{Vector of upper bounds (one for each dimension)}
-  \item{hit}{Hit calculation function. Given a point x, returns TRUE if it is within the target shape.}
+	\item{n}{Number of dimensions (vector components)}
+	\item{i1}{Index of first component}
+	\item{i2}{Index of second component}
+	\item{x}{Scalar bound}
+	\item{...}{Constraint definitions, or a single list of constraint definitions}
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+See \code{\link{har}} for a description of the constraint format.
+
+\code{lowerBoundConstraint} encodes w_i1 >= x
+
+\code{upperBoundConstraint} encodes w_i1 <= x
+
+\code{lowerRatioConstraint} encodes w_i1 / w_i2 >= x
+
+\code{upperRatioConstraint} encodes w_i1 / w_i2 <= x
+
+\code{ordinalConstraint} encodes w_i1 >= w_i2
+
+\code{mergeConstraints} merges the constraints it is given. Alternatively, the function takes a single list of constraint definitions which are to be merged.
 }
 \value{
-  \item{samples}{A matrix containing the generated samples}
-  \item{miss}{The number of misses}
+A constraint definition (concatenation of the given constraint definitions).
 }
 \references{
 %% ~put references to the literature/web site here ~
@@ -40,42 +55,37 @@ Gert van Valkenhoef
 \note{
 %%  ~~further notes~~
 }
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
-\code{\link{constraint}}
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{har}}
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
+# create an ordinal constraint
+c1 <- ordinalConstraint(2, 1, 2)
+stopifnot(c1$constr == c(-1, 1))
+stopifnot(c1$rhs == c(0))
+stopifnot(c1$dir == c("<="))
 
-## The function is currently defined as
-function (niter, lb, ub, hit) 
-{
-    misses <- 0
-    x <- as.list(rep(0, niter))
-    n <- length(lb)
-    d <- ub - lb
-    for (i in 1:niter) {
-        wasHit <- FALSE
-        while (!wasHit) {
-            xN <- lb + d * runif(n)
-            if (hit(xN)) {
-                x[[i]] <- xN
-                wasHit <- TRUE
-            }
-            else {
-                misses <- misses + 1
-            }
-        }
-    }
-    list(samples = x, miss = misses)
-  }
+# create our own constraints
+c2 <- list(constr=t(c(-1, 0)), rhs=c(0), dir=c("<="))
+c3 <- list(constr=t(c(1, 1)), rhs=c(1), dir=c("<="))
+
+# merge the constraints into a single definition
+c <- mergeConstraints(c1, c2, c3)
+stopifnot(c$constr == rbind(c(-1, 1), c(-1, 0), c(1, 1)))
+stopifnot(c$rhs == c(0, 0, 1))
+stopifnot(c$dir == c("<=", "<=", "<="))
+
+# test the alternative (list) method
+l <- mergeConstraints(list(c1, c2, c3))
+stopifnot(c$constr == l$constr)
+stopifnot(c$rhs == l$rhs)
+stopifnot(c$dir == l$dir)
+
+# test iteratively merging
+i <- mergeConstraints(mergeConstraints(c1, c2), c3)
+stopifnot(c$constr == l$constr)
+stopifnot(c$rhs == l$rhs)
+stopifnot(c$dir == l$dir)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{hit-and-run}
+\keyword{constraint}
