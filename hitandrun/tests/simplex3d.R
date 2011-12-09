@@ -1,4 +1,4 @@
-library(har)
+library(hitandrun)
 
 ordinalConstraints <- function(dim) {
 	t(sapply(1:(dim-1), function(i) {ordinalConstraint(dim, i, i + 1)}))

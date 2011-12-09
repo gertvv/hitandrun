@@ -1,5 +1,5 @@
 \name{har}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\alias{har}
 \title{
 "Hit and Run" sampler
 }
@@ -56,6 +56,9 @@ x0 <- c(0.25, 0.25)
 
 # sample 10,000 points
 samples <- har(x0, constr, 1E4)
+
+# Check dimension of result
+stopifnot(dim(samples) == c(1E4, 2))
 
 # Check that x_i >= 0
 stopifnot(samples >= 0)
