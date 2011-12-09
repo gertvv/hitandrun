@@ -18,7 +18,7 @@ har <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
 		as.integer(m), as.double(constr$constr), as.double(constr$rhs),
 		as.integer(N), as.integer(1),
 		samples=matrix(0.0, nrow=N, ncol=n),
-		NAOK=FALSE, DUP=FALSE, PACKAGE="har"
+		NAOK=FALSE, DUP=FALSE, PACKAGE="hitandrun"
 	)$samples
 	if (!is.null(transform)) {
 		if (homogeneous == FALSE) { # Add column to eliminate hom. coord.

@@ -45,12 +45,29 @@ Gert van Valkenhoef
 \code{\link{generateSeedPoint}, \link{simplex.createTransform}, \link{simplex.createConstraints}}
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
+# constraints: x_1 >= 0, x_2 >= 0, x_1 + x_2 <= 1
+A <- rbind(c(-1, 0), c(0, -1), c(1, 1))
+b <- c(0, 0, 1)
+d <- c("<=", "<=", "<=")
+constr <- list(constr=A, rhs=b, dir=d)
+
+# take a point x0 within the polytope
+x0 <- c(0.25, 0.25)
+
+# sample 10,000 points
+samples <- har(x0, constr, 1E4)
+
+# Check that x_i >= 0
+stopifnot(samples >= 0)
+
+# Check that x_1 + x_2 <= 1
+stopifnot(samples[,1] + samples[,2] <= 1)
+
+\dontrun{
+plot(samples)
+}
 
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{hit-and-run}
+\keyword{uniform}
+\keyword{sampling}
