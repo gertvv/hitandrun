@@ -1,4 +1,4 @@
-har <- function(x0, constr, N, thin=1, homogeneous=FALSE) {
+har <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
 	n <- length(x0)
 	m <- dim(constr$constr)[1]
 
@@ -13,13 +13,17 @@ har <- function(x0, constr, N, thin=1, homogeneous=FALSE) {
 		x0 <- c(x0, 1.0)
 	}
 
-	.C("har",
+	samples <- .C("har",
 		as.integer(n - 1), as.double(x0),
 		as.integer(m), as.double(constr$constr), as.double(constr$rhs),
 		as.integer(N), as.integer(1),
 		samples=matrix(0.0, nrow=N, ncol=n),
 		NAOK=FALSE, DUP=FALSE, PACKAGE="har"
 	)$samples
+	if (!is.null(transform)) {
+		samples <- samples %*% t(transform)
+	}
+	samples
 }
 
 # x0: starting point; niter: number of iterations; bound: bounding box function; hit: hit determination function.
