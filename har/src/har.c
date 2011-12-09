@@ -3,6 +3,9 @@
 #include <R_ext/RS.h>
 #include <R_ext/BLAS.h>
 
+#include <Rinternals.h>
+#include <R_ext/Rdynload.h>
+
 typedef struct Matrix {
     double * const data;
     int const nRow;

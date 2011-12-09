@@ -1,0 +1,14 @@
+## compiled code
+useDynLib(har)
+
+## Export regular function names (no dots)
+
+export(har,
+
+	generateSeedPoint,
+
+	simplex.createTransform, simplex.createConstraints,
+
+	ordinalConstraint, upperBoundConstraint, lowerBoundConstraint,
+	upperRatioConstraint, lowerRatioConstraint)
+

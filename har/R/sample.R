@@ -1,3 +1,27 @@
+har <- function(x0, constr, N, thin=1, homogeneous=FALSE) {
+	n <- length(x0)
+	m <- dim(constr$constr)[1]
+
+	# Verify preconditions that the C-code cannot check
+	stopifnot(n == dim(constr$constr)[2])
+	stopifnot(m == length(constr$rhs))
+	stopifnot(constr$dir == "<=")
+
+	if (homogeneous == FALSE) { # Change to homogeneous coordinates
+		n <- n + 1
+		constr$constr <- cbind(constr$constr, 0)
+		x0 <- c(x0, 1.0)
+	}
+
+	.C("har",
+		as.integer(n - 1), as.double(x0),
+		as.integer(m), as.double(constr$constr), as.double(constr$rhs),
+		as.integer(N), as.integer(1),
+		samples=matrix(0.0, nrow=N, ncol=n),
+		NAOK=FALSE, DUP=FALSE, PACKAGE="har"
+	)$samples
+}
+
 # x0: starting point; niter: number of iterations; bound: bounding box function; hit: hit determination function.
 adaptiveHar <- function(x0, niter, bound, hit, printIters=-1) {
 	stopifnot(as.logical(hit(x0)))

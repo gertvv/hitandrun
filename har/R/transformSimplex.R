@@ -10,11 +10,24 @@ simplex.transformResult <- function(basis, samples) {
 	t(sapply(samples, function(x) { basis %*% x })) + 1/n
 }
 
+# Generate a projection matrix that transforms an (n-1) dimensional vector in
+# homogeneous coordinate representation to an n-dimensional weight vector.
+simplex.createTransform <- function(n) {
+	basis <- simplex.basis(n)
+	# add one extra element to vectors in each basis (homogeneous coordinate
+	# representation)
+	basis <- rbind(cbind(basis, rep(0, n)), c(rep(0, n - 1), 1))
+	# create translation matrix (using homogenous coordinates)
+	translation <- cbind(diag(n), rep(1/n, n))
+	# successively apply basis transformation and translation
+	translation %*% basis
+}
+
 # translate the n-dimensional constraints to the (n-1)-dimensional space
-# basis: orthonormal basis for the (n-1)-dimensional simplex in n-dimensional space
-# constr: additional constraints
-simplex.createConstraints <- function(basis, userConstr=NULL) {
-	n <- dim(basis)[1]
+# transform: transform created by simplex.createTransform 
+# userConstr: additional constraints
+simplex.createConstraints <- function(transform, userConstr=NULL) {
+	n <- dim(transform)[1]
 
 	# basic constraints defining the (n-1)-dimensional simplex
 	constr <- diag(rep(-1, n)) # -1*w[i] <= 0
@@ -26,20 +39,11 @@ simplex.createConstraints <- function(basis, userConstr=NULL) {
 		rhs <- c(rhs, userConstr[, n + 1])
 	}
 
-	# add one extra element to vectors in each basis (homogenous coordinate representation)
-	basis <- rbind(cbind(basis, rep(0, n)), c(rep(0, n - 1), 1))
-	# create translation matrix (using homogenous coordinates)
-	translation <- rbind(cbind(diag(n), rep(1/n, n)), c(rep(0, n), 1))
-	# successively apply basis transformation, translation and then constraint calculation
-	constr <- cbind(constr, 0) %*% translation %*% basis
-
-	# add the constraint that the homogenous coordinate equals 1
-	m <- dim(constr)[1]
-	constr <- rbind(constr, c(rep(0, n-1), 1))
-	rhs <- c(rhs, 1)
+	constr <- constr %*% transform
 
 	# give directions
-	dir <- c(rep("<=", m), "=")
+	m <- dim(constr)[1]
+	dir <- rep("<=", m)
 
 	list(constr=constr, rhs=rhs, dir=dir)
 }

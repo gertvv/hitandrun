@@ -14,19 +14,16 @@ simplex.plot <- function(W) {
 }
 
 n <- 3
-constr <- simplex.createConstraints(basis=simplex.basis(n), userConstr=ordinalConstraints(n))
-bb <- simplex.createBoundBox(constr)
-m <- length(constr$rhs) - 1
+transform <- simplex.createTransform(n)
+constr <- simplex.createConstraints(transform, ordinalConstraints(n))
+seedPoint <- generateSeedPoint(constr, homogeneous=TRUE)
 
-dyn.load("har.so")
 N <- 10000
-samples <- .C("har", as.integer(n - 1), as.double(c(bb$start, 1.0)), as.integer(m), as.double(constr$constr[1:m,]), as.double(constr$rhs[1:m]), as.integer(N), as.integer(1), samples=matrix(0.0, nrow=N, ncol=n))$samples
+samples <- har(seedPoint, constr, N, 1, homogeneous=TRUE)
 
-basis <- rbind(cbind(simplex.basis(n), rep(0, n)), c(rep(0, n - 1), 1))
-translation <- cbind(diag(n), rep(1/n, n))
-transform <- translation %*% basis
+#.C("har", as.integer(n - 1), as.double(c(bb$start, 1.0)), as.integer(m), as.double(constr$constr[1:m,]), as.double(constr$rhs[1:m]), as.integer(N), as.integer(1), samples=matrix(0.0, nrow=N, ncol=n))$samples
 
-trSamples <- t(transform %*% t(samples))
+trSamples <- samples %*% t(transform)
 
 # Check that w_i >= w_i+1
 stopifnot(sapply(1:(n-1), function(i) {
