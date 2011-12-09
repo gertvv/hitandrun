@@ -21,7 +21,12 @@ har <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
 		NAOK=FALSE, DUP=FALSE, PACKAGE="har"
 	)$samples
 	if (!is.null(transform)) {
+		if (homogeneous == FALSE) { # Add column to eliminate hom. coord.
+			transform <- cbind(transform, 0)
+		}
 		samples <- samples %*% t(transform)
+	} else if (homogeneous == FALSE) { # Eliminate hom. coord.
+		samples <- samples[,1:(n-1)]
 	}
 	samples
 }

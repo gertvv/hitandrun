@@ -1,4 +1,4 @@
-Package: har
+Package: hitandrun
 Type: Package
 Title: "Hit and Run" method for sampling uniformly form convex shapes.
 Version: 0.1

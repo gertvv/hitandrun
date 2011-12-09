@@ -1,4 +1,4 @@
-PACKAGE=har_0.1.tar.gz
+PACKAGE=hitandrun_0.1.tar.gz
 
 $(PACKAGE): har/src/* har/R/* har/man/* har/DESCRIPTION har/NAMESPACE
 	R CMD build har

@@ -1,32 +1,33 @@
 \name{har}
-\alias{adaptiveHar}
-\alias{nonAdaptiveHar}
-\alias{gibbs}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-"Hit and Run" sampler implementation
+"Hit and Run" sampler
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+The "Hit and Run" method generates a Markov Chain whose stable state converges on the uniform distribution over a convex polytope defined by a set of linear constraints.
 }
 \usage{
-adaptiveHar(x0, niter, bound, hit)
-nonAdaptiveHar(x0, niter, bound, hit)
-gibbs(x0, niter, bound, hit)
+har(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x0}{Starting point (must be in the shape)}
-  \item{niter}{Number of points to generate}
-  \item{bound}{Bounding box function. Given a point x and a direction d, it will give two numbers, l <= 0 and u >= 0, that indicate that any point y > x + u * d or z < x + l * d is outside the target shape.}
-  \item{hit}{Hit calculation function. Given a point x, returns TRUE if it is within the target shape.}
+	\item{x0}{Starting point (must be in the polytope)}
+	\item{constr}{Constraint definition (see details)}
+	\item{N}{Number of iterations to run}
+	\item{thin}{Thinning factor (keep every 'thin'-th sample)}
+	\item{homogeneous}{Whether x0, constr and transform are given in homogeneous coordinate representation (see details)}
+	\item{transform}{Transformation matrix to apply to the generated samples (optional)}
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+The constraints, starting point and transformation matrix can be given in homogeneous coordinate representation (an extra component is added to each vector, equal to 1.0).
+This enables affine transformations (such as translation) to be applied to the coordinate vectors by the constraint and transformation matrices.
+Be aware that while non-affine (perspective) transformations are also possible, they will not in general preserve uniformity of the generated samples.
+
+Constraints are given as a list(constr=A, rhs=b, dir=d), where d should contain only "<=" (other constraints may be supported in the future).
+The constraints define the polytope as usual for linear programming: Ax <= b.
+In particular, it must be true that Ax0 <= b.
 }
 \value{
-  \item{samples}{A matrix containing the generated samples}
-  \item{miss}{The number of misses}
+  A matrix containing the generated samples as rows.
 }
 \references{
 %% ~put references to the literature/web site here ~
@@ -41,7 +42,7 @@ Gert van Valkenhoef
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{generateSeedPoint}, \link{simplex.createTransform}, \link{simplex.createConstraints}}
 }
 \examples{
 ##---- Should be DIRECTLY executable !! ----

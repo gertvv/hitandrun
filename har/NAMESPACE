@@ -1,5 +1,5 @@
 ## compiled code
-useDynLib(har)
+useDynLib(hitandrun)
 
 ## Export regular function names (no dots)
 

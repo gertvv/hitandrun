@@ -1,6 +1,6 @@
-\name{har-package}
-\alias{har-package}
-\alias{har}
+\name{hitandrun-package}
+\alias{hitandrun-package}
+\alias{hitandrun}
 \docType{package}
 \title{
 "Hit and Run" sampling
