@@ -12,6 +12,9 @@ seedPoint <- generateSeedPoint(constr, homogeneous=TRUE)
 N <- 10000
 samples <- har(seedPoint, constr, N, 1, homogeneous=TRUE, transform=transform)
 
+# Check dimension
+stopifnot(dim(samples) == c(N, n))
+
 # Check that w_i >= w_i+1
 stopifnot(sapply(1:(n-1), function(i) {
 	all(samples[,i]>=samples[,i+1])
@@ -27,3 +30,17 @@ stopifnot(apply(samples, 1, sum) < 1 + E)
 
 # Check that the points are not all identical
 stopifnot(apply(samples, 2, sd) > E)
+
+# Check that seed point is not included in sample
+stopifnot(samples[1,] != transform %*% seedPoint)
+
+samples <- har(seedPoint, constr, N, 1, homogeneous=TRUE)
+
+# Check dimension
+stopifnot(dim(samples) == c(N, n))
+
+# Check homogeneous coordinate
+stopifnot(samples[,n] == 1)
+
+# Check that seed point is not included in sample
+stopifnot(samples[1,] != transform %*% seedPoint)
