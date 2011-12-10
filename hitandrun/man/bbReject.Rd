@@ -21,7 +21,9 @@ bbReject(lb, ub, constr, N, homogeneous=FALSE, transform=NULL)
 See \code{\link{har}} for a description of the constraint definition and the homogeneous coordinate representation.
 }
 \value{
-  A matrix containing the generated samples as rows.
+A list, containing:
+	\item{samples}{A matrix containing the generated samples as rows.}
+	\item{rejectionRate}{The mean number of samples rejected for each accepted sample.}
 }
 \references{
 }
@@ -48,9 +50,8 @@ constr <- list(constr=A, rhs=b, dir=d)
 lb <- c(0, 0)
 ub <- c(1, 1)
 
-## Don't run this example because bbReject needs fixing
-\dontrun{# sample 10,000 points
-samples <- bbReject(lb, ub, constr, 1E4)
+# sample 10,000 points
+samples <- bbReject(lb, ub, constr, 1E4)$samples
 
 # Check dimension of result
 stopifnot(dim(samples) == c(1E4, 2))
@@ -60,7 +61,6 @@ stopifnot(samples >= 0)
 
 # Check that x_1 + x_2 <= 1
 stopifnot(samples[,1] + samples[,2] <= 1)
-}
 
 \dontrun{plot(samples)}
 

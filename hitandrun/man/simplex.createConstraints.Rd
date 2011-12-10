@@ -42,7 +42,7 @@ constr <- simplex.createConstraints(transform, userConstr)
 seedPoint <- createSeedPoint(constr, homogeneous=TRUE)
 
 N <- 10000
-samples <- har(seedPoint, constr, N, 1, homogeneous=TRUE, transform=transform)
+samples <- har(seedPoint, constr, N, 1, homogeneous=TRUE, transform=transform)$samples
 
 # Check dimension
 stopifnot(dim(samples) == c(N, n))

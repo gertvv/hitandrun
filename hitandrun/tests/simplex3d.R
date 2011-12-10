@@ -10,7 +10,7 @@ constr <- simplex.createConstraints(transform, ordinalConstraints(n))
 seedPoint <- createSeedPoint(constr, homogeneous=TRUE)
 
 N <- 10000
-samples <- har(seedPoint, constr, N, 1, homogeneous=TRUE, transform=transform)
+samples <- har(seedPoint, constr, N, 1, homogeneous=TRUE, transform=transform)$samples
 
 # Check dimension
 stopifnot(dim(samples) == c(N, n))
@@ -34,7 +34,7 @@ stopifnot(apply(samples, 2, sd) > E)
 # Check that seed point is not included in sample
 stopifnot(samples[1,] != transform %*% seedPoint)
 
-samples <- har(seedPoint, constr, N, 1, homogeneous=TRUE)
+samples <- har(seedPoint, constr, N, 1, homogeneous=TRUE)$samples
 
 # Check dimension
 stopifnot(dim(samples) == c(N, n))

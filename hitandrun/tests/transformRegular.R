@@ -15,7 +15,7 @@ x0 <- c(0.25, 0.25)
 transform <- rbind(c(-1, 0), c(0, 1)) 
 
 # sample 10,000 points
-samples <- har(x0, constr, 1E4, transform=transform)
+samples <- har(x0, constr, 1E4, transform=transform)$samples
 
 stopifnot(dim(samples) == c(1E4, 2))
 

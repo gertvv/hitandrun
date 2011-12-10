@@ -27,7 +27,9 @@ The constraints define the polytope as usual for linear programming: Ax <= b.
 In particular, it must be true that Ax0 <= b.
 }
 \value{
-  A matrix containing the generated samples as rows.
+A list, containing:
+	\item{samples}{A matrix containing the generated samples as rows.}
+	\item{xN}{The last generated sample, untransformed. Can be used as the starting point for a continuation of the chain.}
 }
 \references{
 	Smith, R. L. (1984) "Efficient Monte Carlo Procedures for Generating Points Uniformly Distributed over Bounded Regions". \emph{Operations Research} 32(6): 1296-1308. \href{http://dx.doi.org/10.1287/opre.32.6.1296}{doi:10.1287/opre.32.6.1296}
@@ -55,7 +57,7 @@ constr <- list(constr=A, rhs=b, dir=d)
 x0 <- c(0.25, 0.25)
 
 # sample 10,000 points
-samples <- har(x0, constr, 1E4)
+samples <- har(x0, constr, 1E4)$samples
 
 # Check dimension of result
 stopifnot(dim(samples) == c(1E4, 2))

@@ -1,1 +1,2 @@
 PKG_LIBS=$(BLAS_LIBS) $(FLIBS)
+OBJECTS=har.o bound.o hit.o randDir.o bbReject.o simplexSample.o
