@@ -1,7 +1,7 @@
 \name{simplex.createTransform}
 \alias{simplex.createTransform}
 \title{
-Transform an (n-1)-simplex to (n-1)-dimensional space
+Transform points on an (n-1)-simplex to n-dimensional space
 }
 \description{
 This function generates a matrix to transform points in an (n-1) dimensional homogeneous coordinate representation of the (n-1) simplex to n-dimensional Cartesian coordinates.

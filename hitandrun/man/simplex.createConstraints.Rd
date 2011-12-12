@@ -1,7 +1,7 @@
 \name{simplex.createConstraints}
 \alias{simplex.createConstraints}
 \title{
-Create constraints the define the (n-1)-simplex
+Create constraints that define the (n-1)-simplex
 }
 \description{
 This function takes a transformation matrix from the plane coincident with the (n-1) simplex and (optionally) additional constraints defined in n-dimensional space, and generates a set of constraints defining the simplex and (optionally) the additional constraints in the (n-1)-dimensional homogeneous coordinate system.

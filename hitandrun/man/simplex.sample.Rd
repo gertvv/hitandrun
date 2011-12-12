@@ -65,6 +65,6 @@ stopifnot(apply(samples, 1, sum) < 1 + E)
 stopifnot(samples[,1] >= samples[,2])
 stopifnot(samples[,2] >= samples[,3])
 }
-\keyword{rejection}
+\keyword{simplex}
 \keyword{uniform}
 \keyword{sampling}

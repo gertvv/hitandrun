@@ -63,6 +63,5 @@ stopifnot(bb$ub == c(1.0, 1.0))
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{hit-and-run}
 \keyword{seed point}
 \keyword{bounding box}
