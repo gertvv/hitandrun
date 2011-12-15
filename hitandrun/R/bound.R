@@ -5,35 +5,24 @@ homogeneousCoordinateConstraint <- function(n) {
 
 findExtremePoints <- function(constr, homogeneous=FALSE) {
 	n <- dim(constr$constr)[2]
-	if (homogeneous == TRUE) {
+	nh <- n
+	h <- if (homogeneous == TRUE) {
 		n <- n - 1
-		# add the constraint that the homogenous coordinate equals 1
-		constr <- mergeConstraints(constr, homogeneousCoordinateConstraint(n))
+		hom <- homogeneousCoordinateConstraint(n)
+		makeH(constr$constr, constr$rhs, hom$constr, hom$rhs)
+	} else {
+		makeH(constr$constr, constr$rhs)
 	}
-
-	# because lp_solve assumes vars to be non-negative, split each dimension:
-	# x_i = y_{2i-1} - y_{2i}
-	# thus each dimension is coded as the difference of two variables, give them
-	obj <- function(i) {
-		obj <- rep(0, 2 * n + if (homogeneous) { 1 } else { 0 })
-		obj[2 * i - 1] <- 1
-		obj[2 * i] <- -1
-		obj
-	}
-	unsplit <- t(sapply(1:n, obj))
-	if (homogeneous == TRUE) { # add row to preserve homogeneous coordinate
-		unsplit <- rbind(unsplit, c(rep(0, 2 * n), 1))
-	}
-	a <- constr$constr %*% unsplit
 
 	# for each of the n dimensions, solve 2 LPs to find the min/max
-	findExtreme <- function(dir) {
+	findExtreme <- function(minimize) {
 		function(i) {
-			lp(dir, obj(i), a, constr$dir, constr$rhs)$solution
+			obj <- rep(0, nh)
+			obj[i] <- 1
+			lpcdd(h, obj, minimize=minimize)$primal.solution
 		}
 	}
-	rawExtremes <- cbind(sapply(1:n, findExtreme("min")), sapply(1:n, findExtreme("max")))
-	t(unsplit %*% rawExtremes)
+	t(cbind(sapply(1:n, findExtreme(TRUE)), sapply(1:n, findExtreme(FALSE))))
 }
 
 findVertices <- function(constr, homogeneous=FALSE) {

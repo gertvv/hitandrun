@@ -37,6 +37,8 @@ Gert van Valkenhoef
 \code{\link{har}}
 
 \code{\link{findVertices}}
+
+\code{\link[rcdd]{lpcdd}}
 }
 \examples{
 # constraints: x_1 >= 0, x_2 >= 0, x_1 + x_2 <= 1
