@@ -8,4 +8,4 @@ Maintainer: Gert van Valkenhoef <g.h.m.van.valkenhoef@rug.nl>
 Description: This package provides an implementation of the "Hit and Run" method for sampling uniformly from convex shapes. It further provides specialized implementation for sampling normalized weights with arbitrary linear constraints.
 License: GPL (>= 3)
 LazyLoad: yes
-Depends: far (>= 0.6), lpSolve (>= 5.5)
+Depends: far (>= 0.6), lpSolve (>= 5.5), rcdd (>= 1.1)

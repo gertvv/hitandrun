@@ -5,7 +5,7 @@ useDynLib(hitandrun)
 
 export(har, bbReject, simplex.sample,
 
-	createSeedPoint, createBoundBox,
+	createSeedPoint, createBoundBox, findExtremePoints, findVertices,
 
 	simplex.createTransform, simplex.createConstraints,
 
