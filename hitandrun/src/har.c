@@ -40,7 +40,7 @@ void har(int *_n, double *_x0, int *_m, double *_constr, double *rhs,
 		F77_CALL(daxpy)(&nh, &v, d, &inc1, x, &inc1); // x := vd + x
 
 		if ((i + 1) % thin == 0) { // write result
-			writeRow(&result, i, x);
+			writeRow(&result, i / thin, x);
 		}
 	}
 

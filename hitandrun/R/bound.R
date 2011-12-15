@@ -61,7 +61,7 @@ createSeedPoint <- function(constr, homogeneous=FALSE, randomize=FALSE,
 	}
 
 	# starting point 
-	m <- dim(extreme)[2]
+	m <- dim(extreme)[1]
 	p <- if (randomize == TRUE) { # random weighting
 		w <- as.vector(simplex.sample(m, 1)$samples)
 		apply(extreme, 2, function(row) { sum(w * row) })

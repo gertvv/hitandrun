@@ -16,11 +16,11 @@ har <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
 	samples <- .C("har",
 		as.integer(n - 1), as.double(x0),
 		as.integer(m), as.double(constr$constr), as.double(constr$rhs),
-		as.integer(N), as.integer(1),
-		samples=matrix(0.0, nrow=N, ncol=n),
+		as.integer(N), as.integer(thin),
+		samples=matrix(0.0, nrow=N/thin, ncol=n),
 		NAOK=FALSE, DUP=FALSE, PACKAGE="hitandrun"
 	)$samples
-	xN <- samples[N,]
+	xN <- samples[N/thin,]
 	if (!is.null(transform)) {
 		if (homogeneous == FALSE) { # Add column to eliminate hom. coord.
 			transform <- cbind(transform, 0)
