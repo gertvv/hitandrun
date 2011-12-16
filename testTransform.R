@@ -1,5 +1,4 @@
 library('rgl')
-library('far')
 
 drawVector <- function(v, color="black", alpha=0.6) {
 	lines3d(c(0, v[1]), c(0, v[2]), c(0, v[3]), color=color, alpha=alpha)
@@ -16,7 +15,7 @@ testTransformation <- function() {
 	drawVector((1/3)*basis[,2])
 
 	# draw the orthonormal basis
-	on <- orthonormalization(basis, basis=F, norm=T)
+	on <- qr.Q(qr(basis))
 	drawVector((1/3)*on[,1], color="red", alpha=1)
 	drawVector((1/3)*on[,2], color="red", alpha=1)
 
