@@ -47,7 +47,7 @@ b <- c(0, 0, 1)
 d <- c("<=", "<=", "<=")
 constr <- list(constr=A, rhs=b, dir=d)
 
-findExtremePoints(constr, homogeneous=FALSE)
+findVertices(constr, homogeneous=FALSE)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
