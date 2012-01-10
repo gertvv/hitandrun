@@ -1,5 +1,4 @@
-\name{hitandrun-package}
-\alias{hitandrun-package}
+\name{hitandrun}
 \alias{hitandrun}
 \docType{package}
 \title{
@@ -15,7 +14,7 @@ Utilities are provided for sampling from subsets of the unit simplex (i.e. rando
 \code{\link{har}} is the core "Hit and Run" sampler, \code{\link{bbReject}} is the bounding box rejection sampler and \code{\link{simplex.sample}} samples uniformly from the unit simplex.
 
 See \code{\link{simplex.createTransform}} and \code{\link{simplex.createConstraints}} for sampling from subsets of the unit simplex.
-Utilities to specify common constraints are described in \code{\link{har-constraint}}.
+Utilities to specify common constraints are described in \code{\link{harConstraints}}.
 }
 \author{
 Maintainer: Gert van Valkenhoef <g.h.m.van.valkenhoef@rug.nl>
@@ -31,7 +30,7 @@ Maintainer: Gert van Valkenhoef <g.h.m.van.valkenhoef@rug.nl>
 \code{\link{simplex.createTransform}}
 \code{\link{simplex.createConstraints}}
 
-\code{\link{har-constraint}}
+\code{\link{harConstraints}}
 
 \code{\link{createSeedPoint}}
 \code{\link{createBoundBox}}

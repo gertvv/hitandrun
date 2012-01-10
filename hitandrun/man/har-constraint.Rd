@@ -1,5 +1,5 @@
-\name{har-constraint}
-\alias{har-constraint}
+\name{harConstraints}
+\alias{harConstraints}
 \alias{lowerBoundConstraint}
 \alias{upperBoundConstraint}
 \alias{lowerRatioConstraint}
@@ -82,7 +82,7 @@ stopifnot(c$rhs == l$rhs)
 stopifnot(c$dir == l$dir)
 
 # test iteratively merging
-i <- mergeConstraints(mergeConstraints(c1, c2), c3)
+l <- mergeConstraints(mergeConstraints(c1, c2), c3)
 stopifnot(c$constr == l$constr)
 stopifnot(c$rhs == l$rhs)
 stopifnot(c$dir == l$dir)

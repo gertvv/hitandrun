@@ -34,7 +34,7 @@ Gert van Valkenhoef
 %%  ~~further notes~~
 }
 \seealso{
-\link{har-constraint}
+\code{\link{harConstraints}}
 \code{\link{createBoundBox}}
 \code{\link{simplex.createTransform}}
 \code{\link{simplex.createConstraints}}

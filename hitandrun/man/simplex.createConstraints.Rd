@@ -30,7 +30,7 @@ Gert van Valkenhoef
 \seealso{
 \code{\link{simplex.createTransform}}
 \code{\link{har}}
-\code{\link{har-constraint}}
+\code{\link{harConstraints}}
 }
 \examples{
 n <- 3
