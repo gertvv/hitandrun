@@ -16,12 +16,8 @@ https://github.com/gertvv/hitandrun/downloads
 
 See ??har, ?har, ?har-constraint and ?simplex.sample
 
-Note that the R package is still heavily work-in-progress and we are
-preparing to include elaborate examples, validation and computational
-tests in the future.
+Dependencies
+------------
 
-Java implementation
--------------------
-
-A Java implementation for use in JSMAA (http://smaa.fi/jsmaa.php) is
-planned.
+hitandrun depends on rcdd, which requires GNU MP. On debian derivatives, the
+compile-time dependency is provided by libgmp-dev.
