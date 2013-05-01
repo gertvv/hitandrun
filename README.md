@@ -10,9 +10,13 @@ high-dimensional space. This should enable applying e.g. SMAA
 R implementation
 ----------------
 
-Currently, an R package is available:
+Releases of the R package are available on CRAN:
 
-https://github.com/gertvv/hitandrun/downloads
+http://cran.r-project.org/web/packages/hitandrun/
+
+The source is available from GitHub:
+
+https://github.com/gertvv/hitandrun/
 
 See ??har, ?har, ?har-constraint and ?simplex.sample
 
