@@ -1,4 +1,5 @@
-\name{hitandrun}
+\name{hitandrun-package}
+\alias{hitandrun-package}
 \alias{hitandrun}
 \docType{package}
 \title{
