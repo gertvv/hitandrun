@@ -2,7 +2,6 @@ homogeneousCoordinateConstraint <- function(n) {
 	list(constr=c(rep(0, n), 1), rhs=c(1), dir=c("="))
 }
 
-
 findExtremePoints <- function(constr, homogeneous=FALSE) {
 	n <- dim(constr$constr)[2]
 	nh <- n
@@ -44,7 +43,28 @@ findVertices <- function(constr, homogeneous=FALSE) {
 	v[,-c(1,2)]
 }
 
-# generate seed point from constraints (TODO: implement multiple methods)
+# Finds points on the boundary of the polytope so that the returned set of points spans the polytope.
+# Assumes the polytope is of equal dimension to the space.
+findBoundaryPoints <- function(constr, homogeneous=FALSE) {
+	n <- ncol(constr$constr) - homogeneous # dimensionality of space
+	extreme <- findExtremePoints(constr, homogeneous)
+	m <- qr(extreme[,1:n])$rank
+	while (m < n) {
+		B <- qr.Q(qr(t(extreme[,1:n])))
+		if (homogeneous) {
+			B <- rbind(cbind(B, rep(0, n)), c(rep(0, n), 1))
+		}
+		extreme <- findExtremePoints(
+			list(constr = constr$constr %*% B, dir = constr$dir, rhs = constr$rhs),
+			homogeneous = homogeneous) %*% t(B)
+		m1 <- qr(extreme[,1:n])$rank
+		stopifnot(m1 > m)
+		m <- m1
+	}
+	extreme
+}
+
+# generate seed point from constraints
 createSeedPoint <- function(constr, homogeneous=FALSE, randomize=FALSE,
 		method="extremes") {
 	stopifnot(method %in% c("extremes", "vertices"))
@@ -55,7 +75,7 @@ createSeedPoint <- function(constr, homogeneous=FALSE, randomize=FALSE,
 	}
 
 	extreme <- if (method == "extremes") {
-		findExtremePoints(constr, homogeneous)
+		findBoundaryPoints(constr, homogeneous)
 	} else {
 		findVertices(constr, homogeneous)
 	}
