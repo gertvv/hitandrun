@@ -38,7 +38,7 @@ A list, containing:
 Gert van Valkenhoef
 }
 \note{
-%%  ~~further notes~~
+"Hit and Run" is a Markov Chain Monte Carlo (MCMC) method, so generated samples form a correlated time series. To get a uniform sample, you need O*(n^3) samples, where n is the dimension of the sampling space.
 }
 \seealso{
 \code{\link{harConstraints}}
