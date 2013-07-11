@@ -1,7 +1,7 @@
 Package: hitandrun
 Type: Package
 Title: "Hit and Run" method for sampling uniformly form convex shapes.
-Version: 0.2
+Version: 0.2-1
 Date: 2011-06-29
 Author: Gert van Valkenhoef
 Maintainer: Gert van Valkenhoef <g.h.m.van.valkenhoef@rug.nl>
