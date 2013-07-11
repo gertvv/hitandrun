@@ -27,14 +27,8 @@ The "vertices" method is computationally more expensive.
 \value{
 A coordinate vector in the appropriate coordinate system.
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
 \author{
 Gert van Valkenhoef
-}
-\note{
-%%  ~~further notes~~
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~

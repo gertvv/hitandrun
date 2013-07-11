@@ -20,7 +20,6 @@ upperRatioConstraint(n, i1, i2, x)
 ordinalConstraint(n, i1, i2)
 mergeConstraints(...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
 	\item{n}{Number of dimensions (vector components)}
 	\item{i1}{Index of first component}
@@ -46,14 +45,8 @@ See \code{\link{har}} for a description of the constraint format.
 \value{
 A constraint definition (concatenation of the given constraint definitions).
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
 \author{
 Gert van Valkenhoef
-}
-\note{
-%%  ~~further notes~~
 }
 \seealso{
 \code{\link{har}}

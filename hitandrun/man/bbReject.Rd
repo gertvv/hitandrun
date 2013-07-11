@@ -25,13 +25,8 @@ A list, containing:
 	\item{samples}{A matrix containing the generated samples as rows.}
 	\item{rejectionRate}{The mean number of samples rejected for each accepted sample.}
 }
-\references{
-}
 \author{
 Gert van Valkenhoef
-}
-\note{
-%%  ~~further notes~~
 }
 \seealso{
 \code{\link{harConstraints}}

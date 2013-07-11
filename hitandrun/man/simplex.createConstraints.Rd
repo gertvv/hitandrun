@@ -19,13 +19,8 @@ The transformation of the constraint matrix to (n-1)-dimensional homogeneous coo
 \value{
   A set of constraints in the (n-1)-dimensional homogeneous coordinate system.
 }
-\references{
-}
 \author{
 Gert van Valkenhoef
-}
-\note{
-%%  ~~further notes~~
 }
 \seealso{
 \code{\link{simplex.createTransform}}

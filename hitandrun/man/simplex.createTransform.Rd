@@ -22,13 +22,8 @@ Multiply a coordinate vector in homogeneous coordinates by pre-multiplying by th
 \value{
   A transformation matrix.
 }
-\references{
-}
 \author{
 Gert van Valkenhoef
-}
-\note{
-%%  ~~further notes~~
 }
 \seealso{
 \code{\link{simplex.createConstraints}}

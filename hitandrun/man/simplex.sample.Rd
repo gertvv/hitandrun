@@ -20,15 +20,8 @@ The samples will be uniform over the (n-1)-simplex.
 \value{
 	\item{samples}{A matrix containing the generated samples as rows.}
 }
-\references{
-}
 \author{
 Gert van Valkenhoef
-}
-\note{
-%%  ~~further notes~~
-}
-\seealso{
 }
 \examples{
 n <- 3

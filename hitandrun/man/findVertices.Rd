@@ -21,14 +21,8 @@ Uses the Avis-Fukuda pivoting algorithm to enumerate the vertices of the polytop
 \value{
 A matrix, in which each row is a vertex of the polytope.
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
 \author{
 Gert van Valkenhoef
-}
-\note{
-%%  ~~further notes~~
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~

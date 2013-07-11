@@ -22,18 +22,9 @@ This function uses \code{\link{findExtremePoints}} to find extreme points along 
 \item{lb}{Lower bound for each dimension (not including homogeneous coordinate).}
 \item{ub}{Upper bound for each dimension (not including homogeneous coordinate).}
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
 \author{
 Gert van Valkenhoef
 }
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
 \code{\link{har}}
 
