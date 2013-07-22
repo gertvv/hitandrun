@@ -1,5 +1,5 @@
 homogeneousCoordinateConstraint <- function(n) {
-	list(constr=c(rep(0, n), 1), rhs=c(1), dir=c("="))
+  list(constr=c(rep(0, n), 1), rhs=c(1), dir=c("="))
 }
 
 findInteriorPoint <- function(constr, homogeneous=FALSE) {
@@ -8,7 +8,7 @@ findInteriorPoint <- function(constr, homogeneous=FALSE) {
   # Ax - e = b ; slack on original constraints
   # d <= e_i   ; minimum slack
 
-	n <- dim(constr$constr)[2] # number of variables
+  n <- dim(constr$constr)[2] # number of variables
   m <- dim(constr$constr)[1] # number of constraints
 
   ineq.constr <- matrix(0, nrow=m+m, ncol=n+m+1)
@@ -22,7 +22,7 @@ findInteriorPoint <- function(constr, homogeneous=FALSE) {
   eq.constr[1:m,(n+1):(n+m)] <- diag(m)
   eq.rhs <- constr$rhs
   if (homogeneous == TRUE) {
-		hom <- homogeneousCoordinateConstraint(n - 1)
+    hom <- homogeneousCoordinateConstraint(n - 1)
     eq.constr[m+1,1:n] <- hom$constr
     eq.rhs <- c(eq.rhs, hom$rhs)
   }
@@ -36,44 +36,44 @@ findInteriorPoint <- function(constr, homogeneous=FALSE) {
 }
 
 findExtremePoints <- function(constr, homogeneous=FALSE) {
-	n <- dim(constr$constr)[2]
-	nh <- n
-	h <- if (homogeneous == TRUE) {
-		n <- n - 1
-		hom <- homogeneousCoordinateConstraint(n)
-		makeH(constr$constr, constr$rhs, hom$constr, hom$rhs)
-	} else {
-		makeH(constr$constr, constr$rhs)
-	}
+  n <- dim(constr$constr)[2]
+  nh <- n
+  h <- if (homogeneous == TRUE) {
+    n <- n - 1
+    hom <- homogeneousCoordinateConstraint(n)
+    makeH(constr$constr, constr$rhs, hom$constr, hom$rhs)
+  } else {
+    makeH(constr$constr, constr$rhs)
+  }
 
-	# for each of the n dimensions, solve 2 LPs to find the min/max
-	findExtreme <- function(minimize) {
-		function(i) {
-			obj <- rep(0, nh)
-			obj[i] <- 1
-			lpcdd(h, obj, minimize=minimize)$primal.solution
-		}
-	}
-	t(cbind(sapply(1:n, findExtreme(TRUE)), sapply(1:n, findExtreme(FALSE))))
+  # for each of the n dimensions, solve 2 LPs to find the min/max
+  findExtreme <- function(minimize) {
+    function(i) {
+      obj <- rep(0, nh)
+      obj[i] <- 1
+      lpcdd(h, obj, minimize=minimize)$primal.solution
+    }
+  }
+  t(cbind(sapply(1:n, findExtreme(TRUE)), sapply(1:n, findExtreme(FALSE))))
 }
 
 findVertices <- function(constr, homogeneous=FALSE) {
-	h <- if (homogeneous == TRUE) {
-		n <- dim(constr$constr)[2]
-		hom <- homogeneousCoordinateConstraint(n - 1)
-		makeH(constr$constr, constr$rhs, hom$constr, hom$rhs)
-	} else {
-		makeH(constr$constr, constr$rhs)
-	}
+  h <- if (homogeneous == TRUE) {
+    n <- dim(constr$constr)[2]
+    hom <- homogeneousCoordinateConstraint(n - 1)
+    makeH(constr$constr, constr$rhs, hom$constr, hom$rhs)
+  } else {
+    makeH(constr$constr, constr$rhs)
+  }
 
-	v <- q2d(scdd(d2q(h))$output)
-	# Check that the output are vertices, not other things that would indicate
-	# a bug
-	stopifnot(v[,1] == "0")
-	stopifnot(v[,2] == "1")
+  v <- q2d(scdd(d2q(h))$output)
+  # Check that the output are vertices, not other things that would indicate
+  # a bug
+  stopifnot(v[,1] == "0")
+  stopifnot(v[,2] == "1")
 
-	# Return the vertices only 
-	v[,-c(1,2)]
+  # Return the vertices only 
+  v[,-c(1,2)]
 }
 
 # Finds points on the boundary of the polytope so that the returned set of points spans the
@@ -100,8 +100,8 @@ findBoundaryPoints <- function(constr, homogeneous=FALSE) {
 
 # generate seed point from constraints
 createSeedPoint <- function(constr, homogeneous=FALSE, randomize=FALSE,
-		method="slacklp") {
-	stopifnot(method %in% c("slacklp", "extremes", "vertices"))
+    method="slacklp") {
+  stopifnot(method %in% c("slacklp", "extremes", "vertices"))
 
   if (method == "slacklp") {
     if (randomize) stop("hitandrun::createSeedPoint: slacklp method can not be randomized")
@@ -112,41 +112,41 @@ createSeedPoint <- function(constr, homogeneous=FALSE, randomize=FALSE,
     return(p)
   }
 
-	n <- dim(constr$constr)[2]
-	if (homogeneous == TRUE) {
-		n <- n - 1
-	}
+  n <- dim(constr$constr)[2]
+  if (homogeneous == TRUE) {
+    n <- n - 1
+  }
 
-	extreme <- if (method == "extremes") {
-		findBoundaryPoints(constr, homogeneous)
-	} else {
-		findVertices(constr, homogeneous)
-	}
+  extreme <- if (method == "extremes") {
+    findBoundaryPoints(constr, homogeneous)
+  } else {
+    findVertices(constr, homogeneous)
+  }
 
-	# starting point 
-	m <- dim(extreme)[1]
-	p <- if (randomize == TRUE) { # random weighting
-		w <- as.vector(simplex.sample(m, 1)$samples)
-		apply(extreme, 2, function(row) { sum(w * row) })
-	} else { # mean: approximation of centroid
-		(1/m) * apply(extreme, 2, sum)
-	}
+  # starting point 
+  m <- dim(extreme)[1]
+  p <- if (randomize == TRUE) { # random weighting
+    w <- as.vector(simplex.sample(m, 1)$samples)
+    apply(extreme, 2, function(row) { sum(w * row) })
+  } else { # mean: approximation of centroid
+    (1/m) * apply(extreme, 2, sum)
+  }
 
-	if (homogeneous == TRUE) {
-		p[n + 1] <- 1.0 # eliminate floating point imprecision
-	}
-	p
+  if (homogeneous == TRUE) {
+    p[n + 1] <- 1.0 # eliminate floating point imprecision
+  }
+  p
 }
 
 # create a bounding box given constraints in (n-1)
 createBoundBox <- function(constr, homogeneous=FALSE) {
-	n <- dim(constr$constr)[2]
-	extreme <- findExtremePoints(constr, homogeneous)
-	if (homogeneous == TRUE) {
-		extreme <- extreme[ , 1:(n-1)]
-	}
-	# upper and lower bounds for each dimension in the (n-1) basis
-	lb <- apply(extreme, 2, min)
-	ub <- apply(extreme, 2, max)
-	list(lb=lb, ub=ub)
+  n <- dim(constr$constr)[2]
+  extreme <- findExtremePoints(constr, homogeneous)
+  if (homogeneous == TRUE) {
+    extreme <- extreme[ , 1:(n-1)]
+  }
+  # upper and lower bounds for each dimension in the (n-1) basis
+  lb <- apply(extreme, 2, min)
+  ub <- apply(extreme, 2, max)
+  list(lb=lb, ub=ub)
 }
