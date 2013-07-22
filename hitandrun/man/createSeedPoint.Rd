@@ -7,13 +7,15 @@ Generate a seed point
 Generate a seed point inside a polytope given by a set of linear constraints.
 }
 \usage{
-createSeedPoint(constr, homogeneous=FALSE, randomize=FALSE, method="extremes")
+createSeedPoint(constr, homogeneous=FALSE, randomize=FALSE, method="slacklp")
 }
 \arguments{
 	\item{constr}{Constraint definition}
 	\item{homogeneous}{Whether constr is given in homogeneous coordinate representation}
 	\item{randomize}{If TRUE, randomly weight the generating points}
-	\item{method}{How to obtain generating points: "extremes" for extreme points along each dimension, "vertices" for the vertices of the polytope}
+  \item{method}{How to obtain generating points: "slacklp" for a linear program that maximizes
+    minimum slack, "extremes" for extreme points along each dimension, "vertices" for the vertices
+    of the polytope}
 }
 \details{
 See \code{\link{har}} for a description of the constraint definition and the homogeneous coordinate representation.
@@ -21,8 +23,14 @@ See \code{\link{har}} for a description of the constraint definition and the hom
 This method generates a point within the polytope defined by the given constraints by calculating the weighted arithmetic mean of a set of generating points.
 If `randomize' is set, the weights are randomly generated, otherwise they are all equal.
 
-The "extremes" method uses \code{\link{findExtremePoints}} to find extreme points along each dimension, and the "vertices" method uses \code{\link{findVertices}} to find the vertices of the polytope.
-The "vertices" method is computationally more expensive.
+\itemize{
+\item{The "slacklp" method solves a linear program that maximizes the minimum slack on the inequality constraints.
+This method results in a single interior point and hence can not be randomized.}
+\item{The "extremes" method uses \code{\link{findExtremePoints}} to find extreme points along each dimension, and the "vertices" method uses \code{\link{findVertices}} to find the vertices of the polytope.
+WARNING: due to numerical accuracy issues, this method may generate a point that is slightly outside the polytope.
+Use of this method is no longer recommended, if you require a randomized starting point use the "vertices" method.}
+\item{The "vertices" method is computationally more expensive.}
+}
 }
 \value{
 A coordinate vector in the appropriate coordinate system.

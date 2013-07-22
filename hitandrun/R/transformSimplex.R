@@ -1,7 +1,7 @@
 # create basis for (translated) n-dim simplex
 simplex.basis <- function(n) {
 	b <- rbind(diag(n-1), rep(-1, n-1))
-	qr.Q(qr(b))
+	qr.Q(qr(b, LAPACK=TRUE))
 }
 
 # Generate a projection matrix that transforms an (n-1) dimensional vector in

@@ -1,8 +1,6 @@
 ## compiled code
 useDynLib(hitandrun)
 
-## Export regular function names (no dots)
-
 export(har, bbReject, simplex.sample,
 
 	createSeedPoint, createBoundBox, findExtremePoints, findVertices,
