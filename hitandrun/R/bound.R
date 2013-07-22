@@ -80,22 +80,22 @@ findVertices <- function(constr, homogeneous=FALSE) {
 # polytope.
 # Assumes the polytope is of equal dimension to the space.
 findBoundaryPoints <- function(constr, homogeneous=FALSE) {
-    n <- ncol(constr$constr) - homogeneous # dimensionality of space
-    extreme <- t(findExtremePoints(constr, homogeneous))
-    m <- qr(extreme[,1:n], LAPACK=TRUE)$rank
-    while (m < n) {
-        B <- qr.Q(qr(extreme[1:n,]))
-        if (homogeneous) {
-            B <- rbind(cbind(B, rep(0, n)), c(rep(0, n), 1))
-        }
-        extreme <- t(B) %*% t(findExtremePoints(
-            list(constr = constr$constr %*% B, dir = constr$dir, rhs = constr$rhs),
-            homogeneous = homogeneous))
-        m1 <- qr(extreme[1:n,], LAPACK=TRUE)$rank
-        stopifnot(m1 > m)
-        m <- m1
+  n <- ncol(constr$constr) - homogeneous # dimensionality of space
+  extreme <- t(findExtremePoints(constr, homogeneous))
+  m <- qr(extreme[,1:n], LAPACK=TRUE)$rank
+  while (m < n) {
+    B <- qr.Q(qr(extreme[1:n,]))
+    if (homogeneous) {
+      B <- rbind(cbind(B, rep(0, n)), c(rep(0, n), 1))
     }
-    t(extreme)
+    extreme <- t(B) %*% t(findExtremePoints(
+      list(constr = constr$constr %*% B, dir = constr$dir, rhs = constr$rhs),
+      homogeneous = homogeneous))
+    m1 <- qr(extreme[1:n,], LAPACK=TRUE)$rank
+    stopifnot(m1 > m)
+    m <- m1
+  }
+  t(extreme)
 }
 
 # generate seed point from constraints
