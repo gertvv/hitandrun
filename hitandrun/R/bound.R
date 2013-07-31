@@ -73,7 +73,7 @@ findVertices <- function(constr, homogeneous=FALSE) {
   stopifnot(v[,2] == "1")
 
   # Return the vertices only 
-  v[,-c(1,2)]
+  v[ , -c(1,2), drop=FALSE]
 }
 
 # Finds points on the boundary of the polytope so that the returned set of points spans the
@@ -82,16 +82,16 @@ findVertices <- function(constr, homogeneous=FALSE) {
 findBoundaryPoints <- function(constr, homogeneous=FALSE) {
   n <- ncol(constr$constr) - homogeneous # dimensionality of space
   extreme <- t(findExtremePoints(constr, homogeneous))
-  m <- qr(extreme[,1:n], LAPACK=TRUE)$rank
+  m <- qr(extreme[, 1:n, drop=FALSE], LAPACK=TRUE)$rank
   while (m < n) {
-    B <- qr.Q(qr(extreme[1:n,]))
+    B <- qr.Q(qr(extreme[1:n, , drop=FALSE]))
     if (homogeneous) {
       B <- rbind(cbind(B, rep(0, n)), c(rep(0, n), 1))
     }
     extreme <- t(B) %*% t(findExtremePoints(
       list(constr = constr$constr %*% B, dir = constr$dir, rhs = constr$rhs),
       homogeneous = homogeneous))
-    m1 <- qr(extreme[1:n,], LAPACK=TRUE)$rank
+    m1 <- qr(extreme[1:n, , drop=FALSE], LAPACK=TRUE)$rank
     stopifnot(m1 > m)
     m <- m1
   }
@@ -143,7 +143,7 @@ createBoundBox <- function(constr, homogeneous=FALSE) {
   n <- dim(constr$constr)[2]
   extreme <- findExtremePoints(constr, homogeneous)
   if (homogeneous == TRUE) {
-    extreme <- extreme[ , 1:(n-1)]
+    extreme <- extreme[ , 1:(n-1), drop=FALSE]
   }
   # upper and lower bounds for each dimension in the (n-1) basis
   lb <- apply(extreme, 2, min)

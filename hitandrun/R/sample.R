@@ -20,14 +20,14 @@ har <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
     samples=matrix(0.0, nrow=N/thin, ncol=n),
     NAOK=FALSE, DUP=FALSE, PACKAGE="hitandrun"
   )$samples
-  xN <- samples[N/thin,]
+  xN <- samples[N/thin, , drop=TRUE]
   if (!is.null(transform)) {
     if (homogeneous == FALSE) { # Add column to eliminate hom. coord.
       transform <- cbind(transform, 0)
     }
     samples <- samples %*% t(transform)
   } else if (homogeneous == FALSE) { # Eliminate hom. coord.
-    samples <- samples[,1:(n-1)]
+    samples <- samples[ , 1:(n-1), drop=FALSE]
   }
   list(samples=samples, xN=xN)
 }
@@ -66,7 +66,7 @@ bbReject <- function(lb, ub, constr, N, homogeneous=FALSE, transform=NULL) {
     }
     samples <- samples %*% t(transform)
   } else if (homogeneous == FALSE) { # Eliminate hom. coord.
-    samples <- samples[,1:(n-1)]
+    samples <- samples[, 1:(n-1), drop=FALSE]
   }
   list(samples=samples, rejectionRate=result$reject)
 }
