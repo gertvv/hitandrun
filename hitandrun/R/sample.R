@@ -1,8 +1,9 @@
 har <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
   n <- length(x0)
-  m <- dim(constr$constr)[1]
+  m <- nrow(constr$constr)
 
   # Verify preconditions that the C-code cannot check
+  stopifnot(n > homogeneous)
   stopifnot(n == dim(constr$constr)[2])
   stopifnot(m == length(constr$rhs))
   stopifnot(constr$dir == "<=")
@@ -33,10 +34,11 @@ har <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
 }
 
 bbReject <- function(lb, ub, constr, N, homogeneous=FALSE, transform=NULL) {
-  n <- dim(constr$constr)[2]
-  m <- dim(constr$constr)[1]
+  n <- ncol(constr$constr)
+  m <- nrow(constr$constr)
 
   # Verify preconditions that the C-code cannot check
+  stopifnot(n > homogeneous)
   if (homogeneous == FALSE) {
     stopifnot(n == length(lb))
     stopifnot(n == length(ub))

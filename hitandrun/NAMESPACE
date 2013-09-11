@@ -5,6 +5,7 @@ export(har, bbReject, simplex.sample,
 
 	createSeedPoint, createBoundBox, findExtremePoints, findVertices,
 
+  solution.basis, createTransform, transformConstraints,
 	simplex.createTransform, simplex.createConstraints,
 
 	ordinalConstraint, upperBoundConstraint, lowerBoundConstraint,

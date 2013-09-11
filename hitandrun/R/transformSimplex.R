@@ -1,20 +1,50 @@
+# calculate the Moore-Penrose pseudo-inverse of matrix
+pseudoinverse <- function (m) {
+  msvd <- svd(m)
+  if (length(msvd$d) == 0) {
+    array(0, dim(m)[2:1])
+  } else {
+    msvd$v %*% (1/msvd$d * t(msvd$u))
+  }
+}
+
+# generate basis for solution space of equality constraints
+solution.basis <- function(constr) {
+  stopifnot(all(constr$dir == '='))
+  A <- constr$constr
+  b <- constr$rhs
+
+  A.inv <- pseudoinverse(A)
+
+  if (isTRUE(all.equal(diag(n), A.inv %*% A))) {
+    list(basis=matrix(0, nrow=ncol(A), ncol=0),
+         translate=A.inv %*% b)
+  } else {
+    the.qr <- qr(diag(n) - A.inv %*% A)
+    list(basis=qr.Q(the.qr)[, 1:the.qr$rank, drop=FALSE],
+         translate=A.inv %*% b)
+  }
+}
+
 # create basis for (translated) n-dim simplex
 simplex.basis <- function(n) {
   b <- rbind(diag(n-1), rep(-1, n-1))
-  qr.Q(qr(b, LAPACK=TRUE))
+  list(basis=qr.Q(qr(b)),
+       translate=rep(1/n, n))
 }
 
 # Generate a projection matrix that transforms an (n-1) dimensional vector in
 # homogeneous coordinate representation to an n-dimensional weight vector.
-simplex.createTransform <- function(n, inverse=FALSE, keepHomogeneous=inverse) {
-  basis <- simplex.basis(n)
+createTransform <- function(basis, inverse=FALSE, keepHomogeneous=inverse) {
   # add one extra element to vectors in each basis (homogeneous coordinate
   # representation)
-  basis <- rbind(cbind(basis, rep(0, n)), c(rep(0, n - 1), 1))
+  translate <- if (inverse == FALSE) basis$translate else -basis$translate
+  n <- length(translate)
+  basis <- basis$basis
+  basis <- rbind(cbind(basis, rep(0, n)), c(rep(0, ncol(basis)), 1))
 
   # create translation matrix (using homogenous coordinates)
-  dx <- if (inverse == FALSE) { 1/n } else { -1/n }
-  translation <- rbind(cbind(diag(n), rep(dx, n)), c(rep(0, n), 1))
+  translation <- rbind(cbind(diag(n), translate), c(rep(0, n), 1))
 
   # homogeneous coordinate elimination
   nh <- if (inverse == FALSE) { n + 1 } else { n }
@@ -33,28 +63,36 @@ simplex.createTransform <- function(n, inverse=FALSE, keepHomogeneous=inverse) {
   }
 }
 
+# Generate a projection matrix that transforms an (n-1) dimensional vector in
+# homogeneous coordinate representation to an n-dimensional weight vector.
+simplex.createTransform <- function(n, inverse=FALSE, keepHomogeneous=inverse) {
+  createTransform(simplex.basis(n), inverse, keepHomogeneous)
+}
+
+transformConstraints <- function(transform, constr) {
+  list(
+    constr = constr$constr %*% transform,
+    dir = constr$dir,
+    rhs = constr$rhs)
+}
+
 # translate the n-dimensional constraints to the (n-1)-dimensional space
 # transform: transform created by simplex.createTransform 
 # userConstr: additional constraints
 simplex.createConstraints <- function(transform, userConstr=NULL) {
-  n <- dim(transform)[1]
+  n <- nrow(transform)
 
   # basic constraints defining the (n-1)-dimensional simplex
-  constr <- diag(rep(-1, n)) # -1*w[i] <= 0
-  rhs <- rep(0, n)
+  constr <- list(
+    constr = diag(rep(-1, n)), # -1*w[i] <= 0
+    dir = rep('<=', n),
+    rhs = rep(0, n))
 
   # user constraints
   if (!is.null(userConstr)) {
     stopifnot(userConstr$dir == "<=")
-    constr <- rbind(constr, userConstr$constr)
-    rhs <- c(rhs, userConstr$rhs)
+    constr <- mergeConstraints(constr, userConstr)
   }
 
-  constr <- constr %*% transform
-
-  # give directions
-  m <- dim(constr)[1]
-  dir <- rep("<=", m)
-
-  list(constr=constr, rhs=rhs, dir=dir)
+  transformConstraints(transform, constr)
 }
