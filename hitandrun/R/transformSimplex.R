@@ -13,6 +13,7 @@ solution.basis <- function(constr) {
   stopifnot(all(constr$dir == '='))
   A <- constr$constr
   b <- constr$rhs
+  n <- ncol(A)
 
   A.inv <- pseudoinverse(A)
 
@@ -77,7 +78,7 @@ transformConstraints <- function(transform, constr) {
 }
 
 # translate the n-dimensional constraints to the (n-1)-dimensional space
-# transform: transform created by simplex.createTransform 
+# transform: transform created by simplex.createTransform
 # userConstr: additional constraints
 simplex.createConstraints <- function(transform, userConstr=NULL) {
   n <- nrow(transform)
