@@ -43,8 +43,19 @@ int hit(Matrix *constr, double *rhs, double *x);
  * Generate a random point on the n-dimensional unit sphere.
  * This is done by generating n independent normal variates and then
  * normalizing.
+ * @param d pointer to an array of size n
+ * @param n size of array pointed to by d
  */
 void randDir(double *d, int n);
+
+/**
+ * Generate a random point on the n-dimensional unit sphere.
+ * This is done by generating n independent normal variates and then
+ * normalizing.
+ * @param d pointer to an array of size (*n)
+ * @param n pointed to an integer telling the size of array pointed to by d
+ */
+void randDirForR(double *d, int *n);
 
 /**
  * Give bounds for how far we can move from x in the direction of d without
