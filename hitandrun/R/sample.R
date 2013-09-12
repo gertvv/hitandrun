@@ -81,3 +81,13 @@ simplex.sample <- function(n, N, sort=FALSE) {
   )$samples
   list(samples=samples)
 }
+
+hypersphere.sample <- function(n) { 
+  samples <- .C("randDir",
+                samples=array(0.0, dim=n),
+                as.integer(n),
+                NAOK=FALSE, DUP=TRUE, PACKAGE="hitandrun"
+                )$samples
+  
+  list(samples=samples)
+}
