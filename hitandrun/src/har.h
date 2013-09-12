@@ -44,7 +44,7 @@ int hit(Matrix *constr, double *rhs, double *x);
  * This is done by generating n independent normal variates and then
  * normalizing.
  * @param d pointer to an array of size n
- * @param n size of array pointed to by d
+ * @param n size of the array d
  */
 void randDir(double *d, int n);
 
@@ -52,8 +52,11 @@ void randDir(double *d, int n);
  * Generate a random point on the n-dimensional unit sphere.
  * This is done by generating n independent normal variates and then
  * normalizing.
+ * Note: this function is for interfacing from R. For calling the function from within the
+ * har sampling procedure, use randDir(double *, int).
+ *
  * @param d pointer to an array of size (*n)
- * @param n pointed to an integer telling the size of array pointed to by d
+ * @param n pointer to an integer telling the size of array d
  */
 void randDirForR(double *d, int *n);
 

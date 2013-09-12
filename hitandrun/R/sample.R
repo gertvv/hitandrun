@@ -83,11 +83,11 @@ simplex.sample <- function(n, N, sort=FALSE) {
 }
 
 hypersphere.sample <- function(n) { 
-  samples <- .C("randDirForR",
-                samples=matrix(0.0, nrow=1, ncol=n),
+  sample <- .C("randDirForR",
+                sample=matrix(0.0, nrow=1, ncol=n),
                 as.integer(n),
                 NAOK=FALSE, DUP=FALSE, PACKAGE="hitandrun"
-                )$samples
+                )$sample
   
-  return(samples)
+  return(sample)
 }

@@ -31,6 +31,7 @@ Maintainer: Gert van Valkenhoef <g.h.m.van.valkenhoef@rug.nl>
 \code{\link{har}}
 \code{\link{bbReject}}
 \code{\link{simplex.sample}}
+\code{\link{hypersphere.sample}}
 
 \code{\link{simplex.createTransform}}
 \code{\link{simplex.createConstraints}}
