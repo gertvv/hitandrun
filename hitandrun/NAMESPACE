@@ -1,13 +1,13 @@
 ## compiled code
 useDynLib(hitandrun)
 
-export(har, bbReject, simplex.sample,
+export(har, bbReject, simplex.sample, hypersphere.sample,
+       
+       createSeedPoint, createBoundBox, findExtremePoints, findVertices,
+       solution.basis, createTransform, transformConstraints,
+       
+       simplex.createTransform, simplex.createConstraints,
 
-	createSeedPoint, createBoundBox, findExtremePoints, findVertices,
-
-  solution.basis, createTransform, transformConstraints,
-	simplex.createTransform, simplex.createConstraints,
-
-	ordinalConstraint, upperBoundConstraint, lowerBoundConstraint,
-	upperRatioConstraint, lowerRatioConstraint, mergeConstraints)
+       ordinalConstraint, upperBoundConstraint, lowerBoundConstraint,
+       upperRatioConstraint, lowerRatioConstraint, mergeConstraints)
 
