@@ -7,10 +7,11 @@ Sample uniformly from an n-hypersphere
 Generates uniform random variates over an n-hypersphere
 }
 \usage{
-hypersphere.sample(n)
+hypersphere.sample(n, N)
 }
 \arguments{
-	\item{n}{Dimension of the hypersphere}
+  \item{n}{Dimension of the hypersphere}
+  \item{N}{Number of samples}
 }
 \value{
 	A single n-dimensional sample from the hypersphere.
@@ -19,14 +20,15 @@ hypersphere.sample(n)
 Tommi Tervonen <tommi@smaa.fi>
 }
 \examples{
-n <- 3
+n <- 3 # Dimension
+N <- 5 # Nr samples
 E <- 1E-15 # Error limit
 
-sample <- hypersphere.sample(3)
+sample <- hypersphere.sample(n, N)
 
 # Check summing to unity
-stopifnot(abs(sum(sample^2) - 1) < E)
-
+all(abs(apply(hypersphere.sample(3, 2), 1, function(x) {sum(x^2) })) - 1
+< E)
 }
 \keyword{hypersphere}
 \keyword{uniform}

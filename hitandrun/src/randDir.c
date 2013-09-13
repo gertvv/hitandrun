@@ -9,8 +9,20 @@ void randDir(double *d, int n) {
   F77_CALL(dscal)(&n, &f, d, &inc1);
 }
 
-void randDirForR(double *d, int *n) {
+void randDirForR(double *result, int *_n, int *_N) {
+  int n = *_n;
+  int N = *_N;
+
+  Matrix resMat = {result, N, n};
+
   GetRNGstate(); // enable use of RNGs
-  randDir(d, *n);
+
+  double * curSample = (double *) malloc (sizeof(double) * n);
+  for (int i=0;i<N;i++) {
+    randDir(curSample, n);
+    writeRow(&resMat, i, curSample);
+  }
+  free(curSample);
+
   PutRNGstate();
 }
