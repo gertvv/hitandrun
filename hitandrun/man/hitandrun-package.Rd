@@ -16,6 +16,9 @@ Utilities are provided for sampling from subsets of the unit simplex (i.e. rando
 
 See \code{\link{simplex.createTransform}} and \code{\link{simplex.createConstraints}} for sampling from subsets of the unit simplex.
 Utilities to specify common constraints are described in \code{\link{harConstraints}}.
+
+When the sampling space is restricted by different linear equality constraints, use \code{\link{solution.basis}}, \code{\link{createTransform}}, and \code{\link{transformConstraints}}.
+This is a generalization of the methods for sampling from the simplex.
 }
 \author{
 Maintainer: Gert van Valkenhoef <g.h.m.van.valkenhoef@rug.nl>
@@ -32,6 +35,10 @@ Maintainer: Gert van Valkenhoef <g.h.m.van.valkenhoef@rug.nl>
 \code{\link{bbReject}}
 \code{\link{simplex.sample}}
 \code{\link{hypersphere.sample}}
+
+\code{\link{solution.basis}}
+\code{\link{createTransform}}
+\code{\link{transformConstraints}}
 
 \code{\link{simplex.createTransform}}
 \code{\link{simplex.createConstraints}}
