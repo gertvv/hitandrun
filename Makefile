@@ -7,5 +7,8 @@ $(PACKAGE): hitandrun/src/*.c hitandrun/src/*.h hitandrun/R/* hitandrun/man/* hi
 
 .PHONY: install
 
+clean:
+	rm -f hitandrun/src/*.o hitandrun/src/*.so hitandrun/src/symbols.rds
+
 install: $(PACKAGE)
 	R CMD INSTALL hitandrun

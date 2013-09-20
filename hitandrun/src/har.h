@@ -49,18 +49,12 @@ int hit(Matrix *constr, double *rhs, double *x);
 void randDir(double *d, int n);
 
 /**
- * Generate a random point on the n-dimensional unit sphere.
- * This is done by generating n independent normal variates and then
- * normalizing.
- * Note: this function is for interfacing from R to generate multiple random samples.
- * For calling the function from within the har sampling procedure, 
- * use randDir(double *, int).
- *
- * @param result Pre-allocated (*n) * (*N) matrix for storing the samples
+ * Generate multiple random points on the n-dimensional unit sphere.
  * @param n Dimensionality of a single sample
  * @param N The number of samples
+ * @param result Pre-allocated (*n) * (*N) matrix for storing the samples
  */
-void randDirForR(double *result, int *n, int *N);
+void randDirForR(int *n, int *N, double *result);
 
 /**
  * Give bounds for how far we can move from x in the direction of d without
