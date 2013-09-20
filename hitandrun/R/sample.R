@@ -14,7 +14,7 @@ har <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
     x0 <- c(x0, 1.0)
   }
 
-  samples <- .C("har",
+  samples <- .C("hitandrun_har",
     as.integer(n - 1), as.double(x0),
     as.integer(m), as.double(constr$constr), as.double(constr$rhs),
     as.integer(N), as.integer(thin),
@@ -54,7 +54,7 @@ bbReject <- function(lb, ub, constr, N, homogeneous=FALSE, transform=NULL) {
     constr$constr <- cbind(constr$constr, 0)
   }
 
-  result <- .C("bbReject",
+  result <- .C("hitandrun_bbReject",
     as.integer(n - 1), as.double(lb), as.double(ub),
     as.integer(m), as.double(constr$constr), as.double(constr$rhs),
     as.integer(N),
@@ -74,7 +74,7 @@ bbReject <- function(lb, ub, constr, N, homogeneous=FALSE, transform=NULL) {
 }
 
 simplex.sample <- function(n, N, sort=FALSE) {
-  samples <- .C("simplexSample",
+  samples <- .C("hitandrun_simplexSample",
     as.integer(n), as.integer(sort), as.integer(N),
     samples=matrix(0.0, nrow=N, ncol=n),
     NAOK=FALSE, DUP=FALSE, PACKAGE="hitandrun"
@@ -83,7 +83,7 @@ simplex.sample <- function(n, N, sort=FALSE) {
 }
 
 hypersphere.sample <- function(n, N) { 
-  sample <- .C("randDirForR",
+  sample <- .C("hitandrun_hypersphereSample",
                as.integer(n),
                as.integer(N),
                sample=matrix(0.0, nrow=N, ncol=n),

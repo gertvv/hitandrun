@@ -37,7 +37,7 @@ inline void writeRow(Matrix *m, int i, double *x) {
  * @param x: the vector x.
  * @return 1 if x is within the space, 0 otherwise.
  */
-int hit(Matrix *constr, double *rhs, double *x);
+int hitandrun_hit(Matrix *constr, double *rhs, double *x);
 
 /**
  * Generate a random point on the n-dimensional unit sphere.
@@ -46,7 +46,7 @@ int hit(Matrix *constr, double *rhs, double *x);
  * @param d pointer to an array of size n
  * @param n size of the array d
  */
-void randDir(double *d, int n);
+void hitandrun_randDir(double *d, int n);
 
 /**
  * Generate multiple random points on the n-dimensional unit sphere.
@@ -54,7 +54,7 @@ void randDir(double *d, int n);
  * @param N The number of samples
  * @param result Pre-allocated (*n) * (*N) matrix for storing the samples
  */
-void randDirForR(int *n, int *N, double *result);
+void hitandrun_hypersphereSample(int *n, int *N, double *result);
 
 /**
  * Give bounds for how far we can move from x in the direction of d without
@@ -66,7 +66,7 @@ void randDirForR(int *n, int *N, double *result);
  * @param l: output -- how far we can move in the negative resp. positive
  * direction.
  */
-void bound(Matrix *constr, double *rhs, double *x, double *d, double *l);
+void hitandrun_bound(Matrix *constr, double *rhs, double *x, double *d, double *l);
 
 /**
  * Hit-and-Run sampling using exact intersections with the linear constraints.
@@ -84,7 +84,7 @@ void bound(Matrix *constr, double *rhs, double *x, double *d, double *l);
  * @param thin: thinning interval (will return N=niter/thin samples)
  * @param result: pre-allocated N * (n + 1) result matrix
  */
-void har(int *_n, double *_x0,
+void hitandrun_har(int *_n, double *_x0,
 		int *_m, double *_constr, double *rhs,
 		int *_niter, int *_thin, double *_result);
 
@@ -104,7 +104,7 @@ void har(int *_n, double *_x0,
  * @param result: pre-allocated N * (n + 1) result matrix
  * @param reject: mean rejection rate (output)
  */
-void bbReject(int *_n, double *lb, double *ub,
+void hitandrun_bbReject(int *_n, double *lb, double *ub,
 		int *_m, double *_constr, double *rhs,
 		int *_niter, double *_result, double *reject);
 
@@ -118,4 +118,4 @@ void bbReject(int *_n, double *lb, double *ub,
  * @param result: pre-allocated N * (n + 1) result matrix
  * @param sort: whether to sort the x_i
  */
-void simplexSample(int *_n, int *_sort, int *_niter, double *_result);
+void hitandrun_simplexSample(int *_n, int *_sort, int *_niter, double *_result);

@@ -1,6 +1,6 @@
 #include "har.h"
 
-void bound(Matrix *constr, double *rhs, double *x, double *d, double *l) {
+void hitandrun_bound(Matrix *constr, double *rhs, double *x, double *d, double *l) {
 	const int inc1 = 1;
 	const double one = 1.0, negone = -1.0, zero = 0.0; // for BLAS
 	const char trans = 'N';

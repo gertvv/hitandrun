@@ -1,6 +1,6 @@
 #include "har.h"
 
-void bbReject(int *_n, double *lb, double *ub,
+void hitandrun_bbReject(int *_n, double *lb, double *ub,
 		int *_m, double *_constr, double *rhs,
 		int *_niter, double *_result, double *reject) {
 	int const n = *_n, m = *_m, niter = *_niter;
@@ -25,7 +25,7 @@ void bbReject(int *_n, double *lb, double *ub,
 			for (int j = 0; j < n; ++j) {
 				x[j] = lb[j] + d[j] * unif_rand();
 			}
-			if (hit(&constr, rhs, x)) {
+			if (hitandrun_hit(&constr, rhs, x)) {
 				wasHit = 1;
 				writeRow(&result, i, x);
 			} else {

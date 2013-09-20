@@ -1,6 +1,6 @@
 #include "har.h"
 
-int hit(Matrix *constr, double *rhs, double *x) {
+int hitandrun_hit(Matrix *constr, double *rhs, double *x) {
 	const int inc1 = 1;
 	const double one = 1.0, zero = 0.0; // for BLAS
 	const char trans = 'N';

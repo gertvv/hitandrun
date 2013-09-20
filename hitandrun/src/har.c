@@ -1,6 +1,6 @@
 #include "har.h"
 
-void har(int *_n, double *_x0, int *_m, double *_constr, double *rhs,
+void hitandrun_har(int *_n, double *_x0, int *_m, double *_constr, double *rhs,
 		int *_niter, int *_thin, double *_result) {
 	int const n = *_n, m = *_m, niter = *_niter, thin = *_thin;
 	const int nh = n + 1; // needed for BLAS
@@ -15,7 +15,7 @@ void har(int *_n, double *_x0, int *_m, double *_constr, double *rhs,
 	if (niter % thin != 0) {
 		error("niter % thin != 0");
 	}
-	if (!hit(&constr, rhs, _x0)) {
+	if (!hitandrun_hit(&constr, rhs, _x0)) {
 		error("The starting point must be inside the region");
 	}
 
@@ -28,8 +28,8 @@ void har(int *_n, double *_x0, int *_m, double *_constr, double *rhs,
 	GetRNGstate(); // enable use of RNGs
 
 	for (int i = 0; i < niter; ++i) {
-		randDir(d, n); // generate random direction d
-		bound(&constr, rhs, x, d, l); // calculate bounds l
+		hitandrun_randDir(d, n); // generate random direction d
+		hitandrun_bound(&constr, rhs, x, d, l); // calculate bounds l
 		if (!R_FINITE(l[0]) || !R_FINITE(l[1])) {
 			error("Bounding function gave NA bounds [%f, %f]", l[0], l[1]);
 		}
