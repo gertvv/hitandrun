@@ -22,13 +22,12 @@ Tommi Tervonen <tommi@smaa.fi>
 \examples{
 n <- 3 # Dimension
 N <- 5 # Nr samples
-E <- 1E-15 # Error limit
 
 sample <- hypersphere.sample(n, N)
 
 # Check summing to unity
-all(abs(apply(hypersphere.sample(3, 2), 1, function(x) {sum(x^2) })) - 1
-< E)
+vec.norm <- function(x) { sum(x^2) }
+stopifnot(all.equal(apply(sample, 1, vec.norm), rep(1, N)))
 }
 \keyword{hypersphere}
 \keyword{uniform}
