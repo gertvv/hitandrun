@@ -19,11 +19,11 @@ solution.basis <- function(constr) {
 
   if (isTRUE(all.equal(diag(n), A.inv %*% A))) {
     list(basis=matrix(0, nrow=ncol(A), ncol=0),
-         translate=A.inv %*% b)
+         translate=as.vector(A.inv %*% b))
   } else {
     the.qr <- qr(diag(n) - A.inv %*% A)
     list(basis=qr.Q(the.qr)[, 1:the.qr$rank, drop=FALSE],
-         translate=A.inv %*% b)
+         translate=as.vector(A.inv %*% b))
   }
 }
 
