@@ -1,0 +1,5 @@
+hitandrun.Rcheck
+hitandrun_*.tar.gz
+hitandrun/src/*.o
+hitandrun/src/*.so
+hitandrun/src/symbols.rds
