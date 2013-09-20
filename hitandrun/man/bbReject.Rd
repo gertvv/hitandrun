@@ -29,8 +29,9 @@ A list, containing:
 Gert van Valkenhoef
 }
 \seealso{
-\code{\link{harConstraints}}
 \code{\link{createBoundBox}}
+
+\code{\link{harConstraints}}
 \code{\link{simplex.createTransform}}
 \code{\link{simplex.createConstraints}}
 }
