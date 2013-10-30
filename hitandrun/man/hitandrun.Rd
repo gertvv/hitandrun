@@ -9,7 +9,7 @@ The "Hit and Run" method generates a Markov Chain whose stable state converges o
 \usage{
 hitandrun(constr, n.samples=1E4,
     thin.fn = function(n) { ceiling(log(n + 1)/4 * n^3) }, thin = NULL,
-    x0 = NULL)
+    x0.randomize=FALSE, x0.method="slacklp", x0 = NULL)
 }
 \arguments{
   \item{constr}{Linear constraints that define the sampling space (see details)}
@@ -17,6 +17,8 @@ hitandrun(constr, n.samples=1E4,
 	\item{thin.fn}{Function that specifies a thinning factor depending on the dimension of the sampling space after equality constraints have been eliminated. Will only be invoked if \code{thin} is \code{NULL}}
   \item{thin}{The thinning factor}
   \item{x0}{Seed point for the Markov Chain. Can be used to continue sampling if convergence is inadequate (see value)}
+  \item{x0.randomize}{Whether to generate a random seed point if \code{x0} is unspecified}
+  \item{x0.method}{Method to generate the seed point if \code{x0} is unspecified, see \code{\link{createSeedPoint}}}
 }
 \details{
 The constraints are given as a list with the elements \code{constr}, \code{dir} and \code{rhs}. \code{dir} is a vector with values \code{'='} or \code{'<='}. \code{constr} is a matrix and \code{rhs} a vector, which encode the standard linear programming constraint froms \eqn{Ax = b} and \eqn{Ax \leq b} (depending on \code{dir}). The lengths of \code{rhs} and \code{dir} must match the number of rows of \code{constr}.

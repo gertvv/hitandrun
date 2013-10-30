@@ -2,6 +2,7 @@ hitandrun <- function(constr,
     n.samples=1E4,
     thin.fn = function(n) { ceiling(log(n + 1)/4 * n^3) },
     thin = NULL,
+    x0.randomize = FALSE, x0.method="slacklp",
     x0 = NULL) {
   stopifnot(length(constr[['rhs']]) == length(constr[['dir']]))
   stopifnot(length(constr[['rhs']]) == nrow(constr[['constr']]))
@@ -25,7 +26,7 @@ hitandrun <- function(constr,
   transform <- createTransform(basis)
   constr <- transformConstraints(transform, ineq.constr)
   if (is.null(x0)) {
-    x0 <- createSeedPoint(constr, homogeneous=TRUE)
+    x0 <- createSeedPoint(constr, homogeneous=TRUE, randomize=x0.randomize, method=x0.method)
   }
 
   # sample
