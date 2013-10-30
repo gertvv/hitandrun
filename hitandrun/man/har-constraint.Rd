@@ -1,44 +1,52 @@
 \name{harConstraints}
 \alias{harConstraints}
+\alias{simplexConstraints}
 \alias{lowerBoundConstraint}
 \alias{upperBoundConstraint}
 \alias{lowerRatioConstraint}
 \alias{upperRatioConstraint}
+\alias{exactRatioConstraint}
 \alias{ordinalConstraint}
 \alias{mergeConstraints}
 \title{
 Constraint formulation utility functions
 }
 \description{
-These utility functions generate constraints
+These utility functions generate linear constraints
 }
 \usage{
-lowerBoundConstraint(n, i1, x)
-upperBoundConstraint(n, i1, x)
-lowerRatioConstraint(n, i1, i2, x)
-upperRatioConstraint(n, i1, i2, x)
-ordinalConstraint(n, i1, i2)
+simplexConstraints(n)
+lowerBoundConstraint(n, i, x)
+upperBoundConstraint(n, i, x)
+lowerRatioConstraint(n, i, j, x)
+upperRatioConstraint(n, i, j, x)
+exactRatioConstraint(n, i, j, x)
+ordinalConstraint(n, i, j)
 mergeConstraints(...)
 }
 \arguments{
 	\item{n}{Number of dimensions (vector components)}
-	\item{i1}{Index of first component}
-	\item{i2}{Index of second component}
+	\item{i}{Index of first component}
+	\item{j}{Index of second component}
 	\item{x}{Scalar bound}
 	\item{...}{Constraint definitions, or a single list of constraint definitions}
 }
 \details{
 See \code{\link{har}} for a description of the constraint format.
 
-\code{lowerBoundConstraint} encodes w_i1 >= x
+\code{simplexConstraints} encodes the n-simplex: \eqn{\forall_k w_{k} \geq 0}{all k: w_k <= 1} and \eqn{\sum_k w_k = 0}{sum_k(w_k) = 1}
 
-\code{upperBoundConstraint} encodes w_i1 <= x
+\code{lowerBoundConstraint} encodes \eqn{w_{i} \geq x}{w_i >= x}
 
-\code{lowerRatioConstraint} encodes w_i1 / w_i2 >= x
+\code{upperBoundConstraint} encodes \eqn{w_{i} \leq x}{w_i <= x}
 
-\code{upperRatioConstraint} encodes w_i1 / w_i2 <= x
+\code{lowerRatioConstraint} encodes \eqn{w_{i} / w_{j} \geq x}{w_i / w_j >= x}
 
-\code{ordinalConstraint} encodes w_i1 >= w_i2
+\code{upperRatioConstraint} encodes \eqn{w_{i} / w_{j} \leq x}{w_i / w_j <= x}
+
+\code{exactRatioConstraint} encodes \eqn{w_{i} / w_{j} = x}{w_i / w_j = x}
+
+\code{ordinalConstraint} encodes \eqn{w_{i} \geq w_{j}}{w_i >= w_j}
 
 \code{mergeConstraints} merges the constraints it is given. Alternatively, the function takes a single list of constraint definitions which are to be merged.
 }

@@ -1,6 +1,5 @@
 \name{hitandrun-package}
 \alias{hitandrun-package}
-\alias{hitandrun}
 \docType{package}
 \title{
 "Hit and Run" sampling
@@ -12,6 +11,8 @@ The polytope is given by a set of constraints in standard linear programming for
 Utilities are provided for sampling from subsets of the unit simplex (i.e. random variates that can be interpreted as weights satisfying certain constraints) and for specifying common constraints.
 }
 \details{
+\code{\link{hitandrun}} now provides the most general interface for sampling from spaces defined by arbitrary linear equality and inequality constraints. The functions described in the following provide lower level functionality on which it is built.
+
 \code{\link{har}} is the core "Hit and Run" sampler, \code{\link{bbReject}} is the bounding box rejection sampler and \code{\link{simplex.sample}} samples uniformly from the unit simplex.
 
 See \code{\link{simplex.createTransform}} and \code{\link{simplex.createConstraints}} for sampling from subsets of the unit simplex.
