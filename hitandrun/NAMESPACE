@@ -5,7 +5,8 @@ export(hitandrun, har.init, har.run,
 
        har, bbReject, simplex.sample, hypersphere.sample,
        
-       createSeedPoint, createBoundBox, findExtremePoints, findVertices,
+       createSeedPoint, createBoundBox,
+       findExtremePoints, findVertices, findInteriorPoint,
        solution.basis, createTransform, transformConstraints,
        
        simplex.createTransform, simplex.createConstraints,
