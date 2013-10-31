@@ -1,0 +1,50 @@
+hitandrun 0.3
+=============
+
+Released 2013-10-31
+
+ - Add solution.basis, createTransform, and transformConstraints to deal
+   with equality constraints
+
+ - Add simplexConstraints to explicitly generate the constraints that
+   define the n-simplex
+
+ - Add hitandrun, har.init, and har.run to provide a generalized
+   interface to har that handles equality and inequality constraints
+
+ - Export findInteriorPoint to find an interior point of the polytope
+
+ - Add hypersphere.sample for sampling uniformly from the unit
+   hypersphere
+
+ - Prefix C symbols with hitandrun_ to prevent name clashes
+
+ - Update package documentation extensively
+
+hitandrun 0.2-2
+===============
+
+Released 2013-08-22
+
+ - Add the "slacklp" method for seed point generation
+   (findInteriorPoint) (fixed #2)
+
+ - Prevent dimension reduction of arrays using drop=FALSE on indexing
+   operations
+
+hitandrun 0.2-1
+===============
+
+Released 2013-07-11
+
+ - Bugfix: "extremes" seed point generation sometimes generated points
+   outside the polytope (fixed #1)
+
+ - Documentation updates
+
+hitandrun 0.2
+=============
+
+Released 2012-01-10
+
+ - Initial CRAN release
