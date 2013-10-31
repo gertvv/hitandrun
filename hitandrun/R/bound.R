@@ -27,10 +27,10 @@ findInteriorPoint <- function(constr, homogeneous=FALSE) {
     eq.rhs <- c(eq.rhs, hom$rhs)
   }
 
-  h <- makeH(ineq.constr, ineq.rhs, eq.constr, eq.rhs)
+  h <- rcdd::makeH(ineq.constr, ineq.rhs, eq.constr, eq.rhs)
 
   obj <- c(rep(0, n+m), 1) # maximize minimum slack
-  sol <- lpcdd(h, obj, minimize=FALSE)$primal.solution
+  sol <- rcdd::lpcdd(h, obj, minimize=FALSE)$primal.solution
   if (sol[n+m+1] <= 0) stop("hitandrun::findInteriorPoint: infeasible constraints")
   sol[1:n]
 }
@@ -41,9 +41,9 @@ findExtremePoints <- function(constr, homogeneous=FALSE) {
   h <- if (homogeneous == TRUE) {
     n <- n - 1
     hom <- homogeneousCoordinateConstraint(n)
-    makeH(constr$constr, constr$rhs, hom$constr, hom$rhs)
+    rcdd::makeH(constr$constr, constr$rhs, hom$constr, hom$rhs)
   } else {
-    makeH(constr$constr, constr$rhs)
+    rcdd::makeH(constr$constr, constr$rhs)
   }
 
   # for each of the n dimensions, solve 2 LPs to find the min/max
@@ -51,7 +51,7 @@ findExtremePoints <- function(constr, homogeneous=FALSE) {
     function(i) {
       obj <- rep(0, nh)
       obj[i] <- 1
-      lpcdd(h, obj, minimize=minimize)$primal.solution
+      rcdd::lpcdd(h, obj, minimize=minimize)$primal.solution
     }
   }
   t(cbind(sapply(1:n, findExtreme(TRUE)), sapply(1:n, findExtreme(FALSE))))
@@ -61,12 +61,12 @@ findVertices <- function(constr, homogeneous=FALSE) {
   h <- if (homogeneous == TRUE) {
     n <- dim(constr$constr)[2]
     hom <- homogeneousCoordinateConstraint(n - 1)
-    makeH(constr$constr, constr$rhs, hom$constr, hom$rhs)
+    rcdd::makeH(constr$constr, constr$rhs, hom$constr, hom$rhs)
   } else {
-    makeH(constr$constr, constr$rhs)
+    rcdd::makeH(constr$constr, constr$rhs)
   }
 
-  v <- q2d(scdd(d2q(h))$output)
+  v <- rcdd::q2d(rcdd::scdd(rcdd::d2q(h))$output)
   # Check that the output are vertices, not other things that would indicate
   # a bug
   stopifnot(v[,1] == "0")

@@ -9,4 +9,4 @@ Description: This package provides an implementation of the "Hit and Run" method
 URL: http://github.com/gertvv/hitandrun
 License: GPL (>= 3)
 LazyLoad: yes
-Depends: rcdd (>= 1.1)
+Imports: rcdd (>= 1.1)
