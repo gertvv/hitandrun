@@ -1,7 +1,7 @@
 ## compiled code
 useDynLib(hitandrun)
 
-export(hitandrun,
+export(hitandrun, har.init, har.run,
 
        har, bbReject, simplex.sample, hypersphere.sample,
        

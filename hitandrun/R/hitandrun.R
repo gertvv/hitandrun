@@ -1,5 +1,4 @@
-hitandrun <- function(constr,
-    n.samples=1E4,
+har.init <- function(constr,
     thin.fn = function(n) { ceiling(log(n + 1)/4 * n^3) },
     thin = NULL,
     x0.randomize = FALSE, x0.method="slacklp",
@@ -29,15 +28,39 @@ hitandrun <- function(constr,
     x0 <- createSeedPoint(constr, homogeneous=TRUE, randomize=x0.randomize, method=x0.method)
   }
 
-  # sample
   n <- length(x0) - 1
-  if (n == 0) {
-    list(samples = matrix(rep(basis$translate, each=n.samples), nrow=n.samples),
-         xN = 1)
-  } else {
-    if (is.null(thin)) {
-      thin <- thin.fn(n)
-    }
-    har(x0, constr, N=n.samples * thin, thin=thin, homogeneous=TRUE, transform=transform)
+  if (is.null(thin)) {
+    thin <- if (n == 0) 1 else thin.fn(n)
   }
+
+  list(
+    basis = basis,
+    transform = transform,
+    constr = constr,
+    x0 = x0,
+    thin = thin)
+}
+
+har.run <- function(state, n.samples) {
+  result <- with(state, {
+    n <- length(x0) - 1
+    if (n == 0) {
+      list(samples = matrix(rep(basis$translate, each=n.samples), nrow=n.samples), xN = 1)
+    } else {
+      har(x0, constr, N=n.samples * thin, thin=thin, homogeneous=TRUE, transform=transform)
+    }
+  })
+  state$x0 <- result$xN
+  list(state = state, samples = result$samples)
+}
+
+hitandrun <- function(constr,
+    n.samples=1E4,
+    thin.fn = function(n) { ceiling(log(n + 1)/4 * n^3) },
+    thin = NULL,
+    x0.randomize = FALSE, x0.method="slacklp",
+    x0 = NULL) {
+  state <- har.init(constr, thin.fn, thin, x0.randomize, x0.method, x0)
+  result <- har.run(state, n.samples)
+  result$samples
 }
