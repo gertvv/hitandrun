@@ -61,6 +61,5 @@ stopifnot(samples[,1] + samples[,2] <= 1)
 \dontrun{plot(samples)}
 
 }
-\keyword{rejection}
-\keyword{uniform}
-\keyword{sampling}
+\keyword{bounding box}
+\keyword{uniform sampling}

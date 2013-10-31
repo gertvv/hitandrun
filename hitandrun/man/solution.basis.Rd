@@ -50,3 +50,4 @@ basis <- solution.basis(eq.constr)
 stopifnot(ncol(basis$basis) == 0) # Dimension reduced to 0
 stopifnot(all.equal(basis$translate, c(4/7, 2/7, 1/7)))
 }
+\keyword{transform}

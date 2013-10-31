@@ -31,6 +31,7 @@ Gert van Valkenhoef
 \code{\link{har}}
 
 \code{\link{findExtremePoints}}
+\code{\link{findInteriorPoint}}
 
 \code{\link[rcdd]{scdd}}
 }

@@ -30,6 +30,7 @@ Gert van Valkenhoef
 \seealso{
 \code{\link{har}}
 
+\code{\link{findInteriorPoint}}
 \code{\link{findVertices}}
 
 \code{\link[rcdd]{lpcdd}}

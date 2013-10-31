@@ -22,9 +22,10 @@ The constraints, starting point and transformation matrix can be given in homoge
 This enables affine transformations (such as translation) to be applied to the coordinate vectors by the constraint and transformation matrices.
 Be aware that while non-affine (perspective) transformations are also possible, they will not in general preserve uniformity of the generated samples.
 
-Constraints are given as a list(constr=A, rhs=b, dir=d), where d should contain only "<=" (other constraints may be supported in the future).
-The constraints define the polytope as usual for linear programming: Ax <= b.
-In particular, it must be true that Ax0 <= b.
+Constraints are given as a list(constr=A, rhs=b, dir=d), where d should contain only "<=".
+See \code{\link{hitandrun}} for a "Hit and Run" sampler that also supports equality constraints.
+The constraints define the polytope as usual for linear programming: \eqn{Ax \leq b}{Ax <= b}.
+In particular, it must be true that \eqn{A x_0 \leq b}{Ax0 <= b}.
 }
 \value{
 A list, containing:
@@ -38,13 +39,11 @@ A list, containing:
 Gert van Valkenhoef
 }
 \note{
-"Hit and Run" is a Markov Chain Monte Carlo (MCMC) method, so generated samples form a correlated time series. To get a uniform sample, you need O*(n^3) samples, where n is the dimension of the sampling space.
+"Hit and Run" is a Markov Chain Monte Carlo (MCMC) method, so generated samples form a correlated time series. To get a uniform sample, you need \eqn{O^*(n^3)}{O*(n^3)} samples, where n is the dimension of the sampling space.
 }
 \seealso{
 \code{\link{harConstraints}}
-\code{\link{createSeedPoint}}
-\code{\link{simplex.createTransform}}
-\code{\link{simplex.createConstraints}}
+\code{\link{hitandrun}}
 }
 \examples{
 # constraints: x_1 >= 0, x_2 >= 0, x_1 + x_2 <= 1
@@ -72,5 +71,4 @@ stopifnot(samples[,1] + samples[,2] <= 1)
 
 }
 \keyword{hit-and-run}
-\keyword{uniform}
-\keyword{sampling}
+\keyword{uniform sampling}

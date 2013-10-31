@@ -28,3 +28,4 @@ Gert van Valkenhoef
 \seealso{
 \code{\link{solution.basis}}
 }
+\keyword{transform}

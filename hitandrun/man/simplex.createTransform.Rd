@@ -59,3 +59,4 @@ b
 stopifnot(abs(b - a) < E)
 }
 \keyword{simplex}
+\keyword{transform}

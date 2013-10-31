@@ -30,5 +30,4 @@ vec.norm <- function(x) { sum(x^2) }
 stopifnot(all.equal(apply(sample, 1, vec.norm), rep(1, N)))
 }
 \keyword{hypersphere}
-\keyword{uniform}
-\keyword{sampling}
+\keyword{uniform sampling}

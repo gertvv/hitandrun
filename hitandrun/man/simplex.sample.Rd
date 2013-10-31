@@ -59,5 +59,4 @@ stopifnot(samples[,1] >= samples[,2])
 stopifnot(samples[,2] >= samples[,3])
 }
 \keyword{simplex}
-\keyword{uniform}
-\keyword{sampling}
+\keyword{uniform sampling}

@@ -56,3 +56,5 @@ stopifnot(apply(samples, 1, sum) > 1 - E)
 stopifnot(apply(samples, 1, sum) < 1 + E)
 }
 \keyword{simplex}
+\keyword{constraint}
+\keyword{constraint}
