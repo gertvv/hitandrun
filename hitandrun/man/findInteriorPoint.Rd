@@ -7,7 +7,7 @@ Find an interior point
 Find an interior point of a polytope given by a set of linear constraints along each dimension.
 }
 \usage{
-findExtremePoints(constr, homogeneous=FALSE)
+findInteriorPoint(constr, homogeneous=FALSE)
 }
 \arguments{
 	\item{constr}{Constraint definition}

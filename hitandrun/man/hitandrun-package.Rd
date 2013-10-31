@@ -32,7 +32,9 @@ Maintainer: Gert van Valkenhoef <g.h.m.van.valkenhoef@rug.nl>
 }
 \keyword{hit-and-run}
 \seealso{
+\code{\link{hitandrun}}
 \code{\link{har}}
+
 \code{\link{bbReject}}
 \code{\link{simplex.sample}}
 \code{\link{hypersphere.sample}}
