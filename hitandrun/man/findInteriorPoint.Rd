@@ -7,16 +7,18 @@ Find an interior point
 Find an interior point of a polytope given by a set of linear constraints along each dimension.
 }
 \usage{
-findInteriorPoint(constr, homogeneous=FALSE)
+findInteriorPoint(constr, homogeneous=FALSE, randomize=FALSE)
 }
 \arguments{
 	\item{constr}{Constraint definition}
 	\item{homogeneous}{Whether constr is given in homogeneous coordinate representation}
+	\item{randomize}{Whether the point should be randomized}
 }
 \details{
 See \code{\link{har}} for a description of the constraint definition and the homogeneous coordinate representation.
 
 Solves a slack-maximizing LP to find an interior point of the polytope defined by the given constraints.
+The randomized version randomly scales the slack on each (non-redundant) constraint.
 }
 \value{
 A vector.

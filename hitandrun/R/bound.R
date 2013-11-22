@@ -2,20 +2,43 @@ homogeneousCoordinateConstraint <- function(n) {
   list(constr=c(rep(0, n), 1), rhs=c(1), dir=c("="))
 }
 
-findInteriorPoint <- function(constr, homogeneous=FALSE) {
+eliminateRedundant <- function(constr, homogeneous=FALSE) {
+  n <- ncol(constr$constr)
+  h <- if (homogeneous) {
+    hom <- homogeneousCoordinateConstraint(n - 1)
+    rcdd::makeH(constr$constr, constr$rhs, hom$constr, hom$rhs)
+  } else {
+    rcdd::makeH(constr$constr, constr$rhs)
+  }
+  h.nr <- rcdd::redundant(h)$output
+  rows <- h.nr[, 1] == 0
+  nvar <- ncol(constr$constr)
+  list(
+    constr = -h.nr[rows, 3:(2+nvar), drop=FALSE],
+    rhs    = h.nr[rows, 2, drop=TRUE],
+    dir    = rep("<=", sum(rows)))
+}
+
+findInteriorPoint <- function(constr, homogeneous=FALSE, randomize=FALSE) {
   # max d, subject to
-  # Ax <= b    ; original constraints
-  # Ax - e = b ; slack on original constraints
-  # d <= e_i   ; minimum slack
+  # Ax + e = b ; slack on original constraints
+  # d <= f_i e_i   ; minimum slack
+  # where f_i = 1 if randomize = FALSE and  f_i ~ U(0.01, 1) otherwise
+
+  constr <- eliminateRedundant(constr, homogeneous)
 
   n <- dim(constr$constr)[2] # number of variables
   m <- dim(constr$constr)[1] # number of constraints
 
-  ineq.constr <- matrix(0, nrow=m+m, ncol=n+m+1)
-  ineq.constr[1:m,1:n] <- constr$constr
-  ineq.constr[(m+1):(m+m),(n+1):(n+m)] <- -diag(m)
-  ineq.constr[(m+1):(m+m),n+m+1] <- 1
-  ineq.rhs <- c(constr$rhs, rep(0, m))
+  f <- if (randomize) {
+    runif(m, min=0.01, max=1)
+  } else {
+    rep(1, m)
+  }
+  ineq.constr <- matrix(0, nrow=m, ncol=n+m+1)
+  ineq.constr[1:m,(n+1):(n+m)] <- -diag(f)
+  ineq.constr[1:m,n+m+1] <- 1
+  ineq.rhs <- rep(0, m)
 
   eq.constr <- matrix(0, nrow=m+homogeneous, ncol=n+m+1)
   eq.constr[1:m,1:n] <- constr$constr
@@ -76,69 +99,38 @@ findVertices <- function(constr, homogeneous=FALSE) {
   v[ , -c(1,2), drop=FALSE]
 }
 
-# Finds points on the boundary of the polytope so that the returned set of points spans the
-# polytope.
-# Assumes the polytope is of equal dimension to the space.
-findBoundaryPoints <- function(constr, homogeneous=FALSE) {
-  n <- ncol(constr$constr) - homogeneous # dimensionality of space
-  extreme <- t(findExtremePoints(constr, homogeneous))
-  m <- qr(extreme[, 1:n, drop=FALSE], LAPACK=TRUE)$rank
-  while (m < n) {
-    B <- qr.Q(qr(extreme[1:n, , drop=FALSE]))
-    if (homogeneous) {
-      B <- rbind(cbind(B, rep(0, n)), c(rep(0, n), 1))
-    }
-    extreme <- t(B) %*% t(findExtremePoints(
-      list(constr = constr$constr %*% B, dir = constr$dir, rhs = constr$rhs),
-      homogeneous = homogeneous))
-    m1 <- qr(extreme[1:n, , drop=FALSE], LAPACK=TRUE)$rank
-    stopifnot(m1 > m)
-    m <- m1
-  }
-  t(extreme)
-}
-
-# generate seed point from constraints
+# Generate seed point from constraints
 createSeedPoint <- function(constr, homogeneous=FALSE, randomize=FALSE,
     method="slacklp") {
-  stopifnot(method %in% c("slacklp", "extremes", "vertices"))
+  stopifnot(method %in% c("slacklp", "vertices"))
 
-  if (method == "slacklp") {
-    if (randomize) stop("hitandrun::createSeedPoint: slacklp method can not be randomized")
-    p <- findInteriorPoint(constr, homogeneous)
+  p <- if (method == "slacklp") {
+    findInteriorPoint(constr, homogeneous, randomize)
+  } else { # method == "vertices"
+    n <- dim(constr$constr)[2]
     if (homogeneous == TRUE) {
-      p[length(p)] <- 1.0 # eliminate floating point imprecision
+      n <- n - 1
     }
-    return(p)
-  }
 
-  n <- dim(constr$constr)[2]
-  if (homogeneous == TRUE) {
-    n <- n - 1
-  }
+    extreme <- findVertices(constr, homogeneous)
 
-  extreme <- if (method == "extremes") {
-    findBoundaryPoints(constr, homogeneous)
-  } else {
-    findVertices(constr, homogeneous)
-  }
-
-  # starting point 
-  m <- dim(extreme)[1]
-  p <- if (randomize == TRUE) { # random weighting
-    w <- as.vector(simplex.sample(m, 1)$samples)
-    apply(extreme, 2, function(row) { sum(w * row) })
-  } else { # mean: approximation of centroid
-    (1/m) * apply(extreme, 2, sum)
+    # starting point 
+    m <- nrow(dim(extreme))
+    if (randomize == TRUE) { # random weighting
+      w <- as.vector(simplex.sample(m, 1)$samples)
+      apply(extreme, 2, function(row) { sum(w * row) })
+    } else { # mean: approximation of centroid
+      apply(extreme, 2, mean)
+    }
   }
 
   if (homogeneous == TRUE) {
-    p[n + 1] <- 1.0 # eliminate floating point imprecision
+    p[length(p)] <- 1.0 # eliminate floating point imprecision
   }
   p
 }
 
-# create a bounding box given constraints in (n-1)
+# Create a bounding box given constraints in (n-1)
 createBoundBox <- function(constr, homogeneous=FALSE) {
   n <- dim(constr$constr)[2]
   extreme <- findExtremePoints(constr, homogeneous)

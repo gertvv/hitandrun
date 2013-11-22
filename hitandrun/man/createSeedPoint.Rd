@@ -12,24 +12,17 @@ createSeedPoint(constr, homogeneous=FALSE, randomize=FALSE, method="slacklp")
 \arguments{
 	\item{constr}{Constraint definition}
 	\item{homogeneous}{Whether constr is given in homogeneous coordinate representation}
-	\item{randomize}{If TRUE, randomly weight the generating points}
-  \item{method}{How to obtain generating points: "slacklp" for a linear program that maximizes
-    minimum slack, "extremes" for extreme points along each dimension, "vertices" for the vertices
-    of the polytope}
+	\item{randomize}{If TRUE, randomize the starting point}
+  \item{method}{How to obtain the starting point: "slacklp" for a linear program that maximizes the minimum slack, or "vertices" for a weighted average of the vertices of the polytope}
 }
 \details{
 See \code{\link{har}} for a description of the constraint definition and the homogeneous coordinate representation.
 
-This method generates a point within the polytope defined by the given constraints by calculating the weighted arithmetic mean of a set of generating points.
-If `randomize' is set, the weights are randomly generated, otherwise they are all equal.
 
 \itemize{
 \item{The "slacklp" method solves a linear program that maximizes the minimum slack on the inequality constraints.
-This method results in a single interior point and hence can not be randomized.}
-\item{The "extremes" method uses \code{\link{findExtremePoints}} to find extreme points along each dimension, and the "vertices" method uses \code{\link{findVertices}} to find the vertices of the polytope.
-WARNING: due to numerical accuracy issues, this method may generate a point that is slightly outside the polytope.
-Use of this method is no longer recommended, if you require a randomized starting point use the "vertices" method.}
-\item{The "vertices" method is computationally more expensive.}
+When randomized, the slack on each constraint is randomly rescaled before maximization.}
+\item{The "vertices" method enumerates all vertices of the polytope and then calculates the weighted arithmetic mean of this set of points. If `randomize' is set, the weights are randomly generated, otherwise they are all equal and the generated point is the centroid of the polytope.}
 }
 }
 \value{

@@ -1,3 +1,12 @@
+hitandrun 0.4
+=============
+
+Released 2013-??-??
+
+ - Add randomized slack LP for randomized starting point generation
+
+ - Remove "extremes" method for starting point generation
+
 hitandrun 0.3
 =============
 
