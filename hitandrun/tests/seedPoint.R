@@ -16,6 +16,15 @@ seedPoint <- createSeedPoint(constr, homogeneous=TRUE)
 print(seedPoint %*% t(transform))
 stopifnot(all((constr$constr %*% seedPoint) <= constr$rhs))
 
+## Test randomized seed point generation using slack LP
+
+s1 <- createSeedPoint(constr, method="slacklp", randomize=TRUE, homogeneous=TRUE)
+print(s1 %*% t(transform))
+stopifnot(all((constr$constr %*% s1) <= constr$rhs))
+
+s2 <- createSeedPoint(constr, method="slacklp", randomize=TRUE, homogeneous=TRUE)
+stopifnot(!isTRUE(all.equal(s1, s2)))
+
 ## Integration test for bug #1: https://github.com/gertvv/hitandrun/issues/1
 # "Generated seed point may be outside polytope"
 
