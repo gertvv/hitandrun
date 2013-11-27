@@ -17,14 +17,14 @@ typedef struct Matrix {
  * @param i Row index.
  * @param j Column index.
  */
-inline double *get(Matrix *m, int i, int j) {
+static inline double *get(Matrix *m, int i, int j) {
 	return m->data + j * (m->nRow) + i;
 }
 
 /**
  * Write a row to a matrix.
  */
-inline void writeRow(Matrix *m, int i, double *x) {
+static inline void writeRow(Matrix *m, int i, double *x) {
 	for (int j = 0; j < m->nCol; ++j) {
 		*get(m, i, j) = x[j];
 	}
