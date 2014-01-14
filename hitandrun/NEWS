@@ -1,3 +1,12 @@
+hitandrun 0.4-1
+===============
+
+Released 2014-01-14
+
+ - Detect and handle degenerate sampling spaces
+
+ - Use rational arithmetic in rcdd:: computations
+
 hitandrun 0.4
 =============
 
