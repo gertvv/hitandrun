@@ -2,33 +2,19 @@ homogeneousCoordinateConstraint <- function(n) {
   list(constr=c(rep(0, n), 1), rhs=c(1), dir=c("="))
 }
 
-eliminateRedundant <- function(constr, homogeneous=FALSE) {
-  n <- ncol(constr$constr)
-  h <- if (homogeneous) {
-    hom <- homogeneousCoordinateConstraint(n - 1)
-    rcdd::makeH(constr$constr, constr$rhs, hom$constr, hom$rhs)
-  } else {
-    rcdd::makeH(constr$constr, constr$rhs)
-  }
-  h.nr <- rcdd::redundant(h)$output
-  rows <- h.nr[, 1] == 0
-  nvar <- ncol(constr$constr)
-  list(
-    constr = -h.nr[rows, 3:(2+nvar), drop=FALSE],
-    rhs    = h.nr[rows, 2, drop=TRUE],
-    dir    = rep("<=", sum(rows)))
-}
-
 findInteriorPoint <- function(constr, homogeneous=FALSE, randomize=FALSE) {
   # max d, subject to
   # Ax + e = b ; slack on original constraints
   # d <= f_i e_i   ; minimum slack
   # where f_i = 1 if randomize = FALSE and  f_i ~ U(0.01, 1) otherwise
-
-  constr <- eliminateRedundant(constr, homogeneous)
-
   n <- dim(constr$constr)[2] # number of variables
   m <- dim(constr$constr)[1] # number of constraints
+
+  if (n == homogeneous) { # detect degenerate case
+    return(rep(1, homogeneous))
+  } else if (m < n) {
+    stop("Underconstrained problem")
+  }
 
   f <- if (randomize) {
     runif(m, min=0.01, max=1)

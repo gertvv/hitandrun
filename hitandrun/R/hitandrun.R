@@ -1,3 +1,35 @@
+eq.constr <- function(constr) {
+  filterConstraints(constr, constr[['dir']] == '=')
+}
+
+iq.constr <- function(constr) {
+  x <- filterConstraints(constr, constr[['dir']] != '=')
+  stopifnot(all(x[['dir']] == '<='))
+  x
+}
+
+eliminateRedundant <- function(constr) {
+  n <- ncol(constr$constr)
+
+  eq <- eq.constr(constr)
+  iq <- iq.constr(constr)
+
+  h <- 
+    if (length(eq[['dir']]) > 0) {
+      rcdd::makeH(iq$constr, iq$rhs, eq$constr, eq$rhs)
+    } else {
+      rcdd::makeH(iq$constr, iq$rhs)
+    }
+
+  h.nr <- rcdd::redundant(h)$output
+  rows <- h.nr[, 1] == 0
+  nvar <- ncol(constr$constr)
+  list(
+    constr = -h.nr[ , -c(1, 2), drop=FALSE],
+    rhs    = h.nr[ , 2, drop=TRUE],
+    dir    = c("<=", "=")[h.nr[, 1] + 1])
+}
+
 har.init <- function(constr,
     thin.fn = function(n) { ceiling(log(n + 1)/4 * n^3) },
     thin = NULL,
@@ -7,23 +39,24 @@ har.init <- function(constr,
   stopifnot(length(constr[['rhs']]) == nrow(constr[['constr']]))
   stopifnot(length(constr[['rhs']]) > 0)
 
+  # Eliminate redundant constraints to catch any implied equalities
+  constr <- eliminateRedundant(constr)
+
   # Separate equality from inequality constraints
-  sel.eq <- constr$dir == '='
-  eq.constr <- filterConstraints(constr, sel.eq)
-  ineq.constr <- filterConstraints(constr, !sel.eq)
-  stopifnot(all(ineq.constr[['dir']] == '<='))
+  eq <- eq.constr(constr)
+  iq <- iq.constr(constr)
 
   # Generate basis, transform, seed point
   basis <- 
-  if (length(eq.constr$dir) > 0) {
-    solution.basis(eq.constr)
+  if (length(eq$dir) > 0) {
+    solution.basis(eq)
   } else {
-    n <- ncol(ineq.constr$constr)
+    n <- ncol(constr$constr)
     list(translate=rep(0, n), basis=diag(n))
   }
   
   transform <- createTransform(basis)
-  constr <- transformConstraints(transform, ineq.constr)
+  constr <- transformConstraints(transform, iq)
   if (is.null(x0)) {
     x0 <- createSeedPoint(constr, homogeneous=TRUE, randomize=x0.randomize, method=x0.method)
   }
