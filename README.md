@@ -25,3 +25,9 @@ Dependencies
 
 hitandrun depends on rcdd, which requires GNU MP. On debian derivatives, the
 compile-time dependency is provided by libgmp-dev.
+
+Contributors
+------------
+
+Thanks to Tommi Tervonen, Douwe Postmus, Ahmet Kandakoglu and Alexander
+Karlsson for reporting bugs and/or suggesting improvements.
