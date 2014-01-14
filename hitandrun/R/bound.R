@@ -39,7 +39,7 @@ findInteriorPoint <- function(constr, homogeneous=FALSE, randomize=FALSE) {
   h <- rcdd::makeH(ineq.constr, ineq.rhs, eq.constr, eq.rhs)
 
   obj <- c(rep(0, n+m), 1) # maximize minimum slack
-  sol <- rcdd::lpcdd(h, obj, minimize=FALSE)$primal.solution
+  sol <- rcdd::q2d(rcdd::lpcdd(rcdd::d2q(h), rcdd::d2q(obj), minimize=FALSE)$primal.solution)
   if (sol[n+m+1] <= 0) stop("hitandrun::findInteriorPoint: infeasible constraints")
   sol[1:n]
 }
@@ -60,7 +60,7 @@ findExtremePoints <- function(constr, homogeneous=FALSE) {
     function(i) {
       obj <- rep(0, nh)
       obj[i] <- 1
-      rcdd::lpcdd(h, obj, minimize=minimize)$primal.solution
+      rcdd::q2d(rcdd::lpcdd(rcdd::d2q(h), rcdd::d2q(obj), minimize=minimize)$primal.solution)
     }
   }
   t(cbind(sapply(1:n, findExtreme(TRUE)), sapply(1:n, findExtreme(FALSE))))
