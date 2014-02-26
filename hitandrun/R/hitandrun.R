@@ -21,7 +21,13 @@ eliminateRedundant <- function(constr) {
       rcdd::makeH(iq$constr, iq$rhs)
     }
 
-  h.nr <- rcdd::q2d(rcdd::redundant(rcdd::d2q(h))$output)
+  d2q.res <- rcdd::d2q(h)
+
+  if (nrow(d2q.res) < 2) {
+      return(constr)
+  }
+
+  h.nr <- rcdd::q2d(rcdd::redundant(d2q.res)$output)
   rows <- h.nr[, 1] == 0
   nvar <- ncol(constr$constr)
   list(

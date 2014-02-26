@@ -14,5 +14,6 @@ export(hitandrun, har.init, har.run,
        ordinalConstraint, upperBoundConstraint, lowerBoundConstraint,
        upperRatioConstraint, lowerRatioConstraint, exactRatioConstraint,
        simplexConstraints,
-       mergeConstraints)
+       mergeConstraints,
+       eliminateRedundant)
 
