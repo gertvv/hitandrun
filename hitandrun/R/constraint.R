@@ -10,16 +10,14 @@ ordinalConstraint <- function(n, i, j) {
 upperBoundConstraint <- function(n, i, x) {
   a <- rep(0, n)
   a[i] <- 1
-  a[n + 1] <- x
-  list(constr=t(a), rhs=c(0), dir=c("<="))
+  list(constr=t(a), rhs=c(x), dir=c("<="))
 }
 
 # create the constraint that w_i >= x
 lowerBoundConstraint <- function(n, i, x) {
   a <- rep(0, n)
   a[i] <- -1
-  a[n + 1] <- -x
-  list(constr=t(a), rhs=c(0), dir=c("<="))
+  list(constr=t(a), rhs=c(-x), dir=c("<="))
 }
 
 # create the constraint that w_i/w_j <= x
