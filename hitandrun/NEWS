@@ -9,6 +9,8 @@ Released 2014-XX-YY
 
  - Do not call rcdd::redundant with fewer than two constraints
 
+ - Convert all C code to '.Call interface'
+
 hitandrun 0.4-1
 ===============
 
