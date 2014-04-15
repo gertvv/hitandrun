@@ -57,6 +57,8 @@ A constraint definition (concatenation of the given constraint definitions).
 Gert van Valkenhoef
 }
 \seealso{
+\code{\link{eliminateRedundant}}
+\code{\link{hitandrun}}
 \code{\link{har}}
 }
 \examples{

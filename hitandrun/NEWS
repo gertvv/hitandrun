@@ -1,3 +1,14 @@
+hitandrun 0.4-2
+===============
+
+Released 2014-XX-YY
+
+ - Expose eliminateRedundant in the NAMESPACE
+
+ - Fix (upper|lower)BoundConstraint
+
+ - Do not call rcdd::redundant with fewer than two constraints
+
 hitandrun 0.4-1
 ===============
 

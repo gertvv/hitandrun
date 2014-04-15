@@ -1,18 +1,16 @@
 \name{eliminateRedundant}
 \alias{eliminateRedundant}
 \title{
-  Eliminate redundant linear constraints
+Eliminate redundant linear constraints
 }
 \description{
-Given a set of linear constraints, gives a subset of these constraints
-that are non-redundant, i.e. that are not required for defining the
-convex polytope.
+Given a set of linear constraints, gives a subset of these constraints that are non-redundant.
 }
 \usage{
 eliminateRedundant(constr)
 }
 \arguments{
-	\item{constr}{A structure of HAR linear constraints}
+	\item{constr}{Constraints}
 }
 \details{
   If no constraints are redundant, returns the same set of constraints.
@@ -21,15 +19,18 @@ eliminateRedundant(constr)
   A set of non-redundant constraints.
 }
 \author{
-  Gert van Valkenhoef and Tommi Tervonen <tommi@smaa.fi>
+  Gert van Valkenhoef, Tommi Tervonen
 }
 \seealso{
-  \code{\link{har}}
+\code{\link{harConstraints}}
 }
 \examples{
-
 constr <- list(
-  constr = matrix(c(-1, 0, 0, -1, 1, 1, 0.5, -1), ncol=2, byrow=TRUE),
+  constr = rbind(
+    c(-1  ,  0),
+    c( 0  , -1),
+    c( 1  ,  1),
+    c( 0.5, -1)),
   dir = c('<=', '<=', '=', '<='),
   rhs = c(0, 0, 1, 0))
 
@@ -37,5 +38,4 @@ constr <- eliminateRedundant(constr)
 
 stopifnot(nrow(constr$constr) == 3) # eliminates one constraint
 }
-
 \keyword{constraint}
