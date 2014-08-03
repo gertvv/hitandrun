@@ -48,20 +48,22 @@ createTransform <- function(basis, inverse=FALSE, keepHomogeneous=inverse) {
   translation <- rbind(cbind(diag(n), translate), c(rep(0, n), 1))
 
   # homogeneous coordinate elimination
-  nh <- if (inverse == FALSE) { n + 1 } else { n }
+  nh <- if (inverse == FALSE) { nrow(basis) } else { ncol(basis) }
   elimHom <- if (keepHomogeneous) {
     diag(nh)
   } else {
     cbind(diag(nh - 1), rep(0, nh - 1))
   }
 
-  if (inverse == FALSE) {
+  transform <- if (inverse == FALSE) {
     # successively apply basis transformation and translation
     elimHom %*% translation %*% basis
   } else {
     # successively apply translation and basis transformation
     elimHom %*% t(basis) %*% translation
   }
+
+  unname(transform)
 }
 
 # Generate a projection matrix that transforms an (n-1) dimensional vector in

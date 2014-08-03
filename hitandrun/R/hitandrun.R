@@ -34,13 +34,14 @@ har.init <- function(constr,
     thin.fn = function(n) { ceiling(log(n + 1)/4 * n^3) },
     thin = NULL,
     x0.randomize = FALSE, x0.method="slacklp",
-    x0 = NULL) {
+    x0 = NULL,
+    eliminate=TRUE) {
   stopifnot(length(constr[['rhs']]) == length(constr[['dir']]))
   stopifnot(length(constr[['rhs']]) == nrow(constr[['constr']]))
   stopifnot(length(constr[['rhs']]) > 0)
 
   # Eliminate redundant constraints to catch any implied equalities
-  constr <- eliminateRedundant(constr)
+  constr <- if (eliminate) eliminateRedundant(constr) else constr
 
   # Separate equality from inequality constraints
   eq <- eq.constr(constr)
@@ -59,6 +60,8 @@ har.init <- function(constr,
   constr <- transformConstraints(transform, iq)
   if (is.null(x0)) {
     x0 <- createSeedPoint(constr, homogeneous=TRUE, randomize=x0.randomize, method=x0.method)
+  } else {
+    x0 <- createTransform(basis, inverse=TRUE) %*% c(x0, 1)
   }
 
   n <- length(x0) - 1
@@ -92,8 +95,9 @@ hitandrun <- function(constr,
     thin.fn = function(n) { ceiling(log(n + 1)/4 * n^3) },
     thin = NULL,
     x0.randomize = FALSE, x0.method="slacklp",
-    x0 = NULL) {
-  state <- har.init(constr, thin.fn, thin, x0.randomize, x0.method, x0)
+    x0 = NULL,
+    eliminate=TRUE) {
+  state <- har.init(constr, thin.fn, thin, x0.randomize, x0.method, x0, eliminate)
   result <- har.run(state, n.samples)
   result$samples
 }
