@@ -1,3 +1,16 @@
+hitandrun 0.4-2
+===============
+
+Released 2014-08-04
+
+ - Add parameter to skip the elimination of redundant constraints by
+   hitandrun() and har.init().
+
+ - hitandrun() and har.init() now correctly transform x0 if it is given.
+
+ - Bugfix: createTransform(inverse=TRUE) failed if the dimensionality
+   was reduced by more than one.
+
 hitandrun 0.4-1
 ===============
 
