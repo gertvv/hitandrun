@@ -49,14 +49,6 @@ int hitandrun_hit(Matrix *constr, double *rhs, double *x);
 void hitandrun_randDir(double *d, int n);
 
 /**
- * Generate multiple random points on the n-dimensional unit sphere.
- * @param n Dimensionality of a single sample
- * @param N The number of samples
- * @param result Pre-allocated (*n) * (*N) matrix for storing the samples
- */
-void hitandrun_hypersphereSample(int *n, int *N, double *result);
-
-/**
  * Give bounds for how far we can move from x in the direction of d without
  * exiting the space Ax <= b.
  * @param constr: the matrix A.
@@ -75,18 +67,14 @@ void hitandrun_bound(Matrix *constr, double *rhs, double *x, double *d, double *
  * coordinate is set equal to 1) so the constraint matrix can perform
  * translation etc. The generated jump direction will have its last coordinate
  * equal to 0.
- * @param n: the dimension of the sampling space.
  * @param x0: vector representing the seed point (n + 1 components)
- * @param m: the number of constraints
  * @param constr: the m * (n + 1) constraint matrix A
  * @param rhs: the vector b (m components): Ax <= b
  * @param niter: number of iterations to sample for
  * @param thin: thinning interval (will return N=niter/thin samples)
- * @param result: pre-allocated N * (n + 1) result matrix
+ * @return N * (n + 1) result matrix
  */
-void hitandrun_har(int *_n, double *_x0,
-		int *_m, double *_constr, double *rhs,
-		int *_niter, int *_thin, double *_result);
+SEXP hitandrun_har(SEXP x0, SEXP constr, SEXP rhs, SEXP niter, SEXP thin);
 
 /**
  * Rejection sampling from the convex region Ax <= b, by generating uniform
@@ -94,19 +82,14 @@ void hitandrun_har(int *_n, double *_x0,
  * Coordinate vectors are given in homogeneous coordinates (i.e. the last
  * coordinate is set equal to 1) so the constraint matrix can perform
  * translation etc.
- * @param n: the dimension of the sampling space.
  * @param lb: vector of lower bounds for each dimension (n components)
  * @param ub: vector of upper bounds for each dimension (n components)
- * @param m: the number of constraints
  * @param constr: the m * (n + 1) constraint matrix A
  * @param rhs: the vector b (m components): Ax <= b
  * @param niter: number of samples to generate
- * @param result: pre-allocated N * (n + 1) result matrix
- * @param reject: mean rejection rate (output)
+ * @return A list of: (1) N * (n + 1) result matrix; (2) rejection rate
  */
-void hitandrun_bbReject(int *_n, double *lb, double *ub,
-		int *_m, double *_constr, double *rhs,
-		int *_niter, double *_result, double *reject);
+SEXP hitandrun_bbReject(SEXP lb, SEXP ub, SEXP constr, SEXP rhs, SEXP niter);
 
 /**
  * Uniform sampling from the (n-1)-simplex in n-dimensional space.
@@ -114,8 +97,16 @@ void hitandrun_bbReject(int *_n, double *lb, double *ub,
  * \sum_i x_i = 1.
  * Optionally the x_i can be sorted so that x_i >= x_{i+1}.
  * @param n: the dimension of the sampling space.
- * @param niter: number of samples to generate
- * @param result: pre-allocated N * (n + 1) result matrix
  * @param sort: whether to sort the x_i
+ * @param niter: number of samples to generate
+ * @return N * (n + 1) result matrix
  */
-void hitandrun_simplexSample(int *_n, int *_sort, int *_niter, double *_result);
+SEXP hitandrun_simplexSample(SEXP _n, SEXP _sort, SEXP _niter);
+
+/**
+ * Uniform sampling from the boundary of the n-sphere.
+ * @param n Dimensionality of the hypersphere
+ * @param N The number of samples
+ * @return n * N result matrix
+ */
+SEXP hitandrun_hypersphereSample(SEXP n, SEXP N);

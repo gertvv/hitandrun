@@ -12,10 +12,16 @@ int hitandrun_doubleDesc(void const *_a, void const *_b) {
 	return d > 0 ? 1 : (d < 0 ? -1 : 0);
 }
 
-void hitandrun_simplexSample(int *_n, int *_sort, int *_niter, double *_result) {
-	int const n = *_n, niter = *_niter, sort = *_sort;
-	Matrix result = { _result, niter, n };
+SEXP hitandrun_simplexSample(SEXP _n, SEXP _sort, SEXP _niter) {
+	int const n = asInteger(_n);
+	int const sort = asLogical(_sort);
+	int const niter = asInteger(_niter);
 
+	// allocate output matrix
+	SEXP _result = PROTECT(allocMatrix(REALSXP, niter, n));
+	Matrix result = { REAL(_result), niter, n };
+
+	// state variables
 	double x[n + 1];
 
 	GetRNGstate(); // enable use of RNGs
@@ -36,4 +42,7 @@ void hitandrun_simplexSample(int *_n, int *_sort, int *_niter, double *_result) 
 	}
 
 	PutRNGstate();
+
+	UNPROTECT(1);
+	return _result;
 }

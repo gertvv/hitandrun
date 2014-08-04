@@ -1,12 +1,12 @@
 Package: hitandrun
 Type: Package
 Title: "Hit and Run" method for sampling uniformly from convex shapes.
-Version: 0.4-2
-Date: 2014-08-04
-Author: Gert van Valkenhoef
+Version: 0.4-3
+Date: 2014-XX-YY
+Author: Gert van Valkenhoef, Tommi Tervonen
 Maintainer: Gert van Valkenhoef <g.h.m.van.valkenhoef@rug.nl>
 Description: This package provides an implementation of the "Hit and Run" method for sampling uniformly from convex shapes. It further provides specialized implementation for sampling normalized weights with arbitrary linear constraints.
 URL: http://github.com/gertvv/hitandrun
-License: GPL (>= 3)
+License: GPL-3
 LazyLoad: yes
 Imports: rcdd (>= 1.1)

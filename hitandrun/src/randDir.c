@@ -8,19 +8,3 @@ void hitandrun_randDir(double *d, int n) {
 	double f = 1 / F77_CALL(dnrm2)(&n, d, &inc1);
 	F77_CALL(dscal)(&n, &f, d, &inc1);
 }
-
-void hitandrun_hypersphereSample(int *_n, int *_niter, double *_result) {
-	int n = *_n;
-	int niter = *_niter;
-	Matrix result = { _result, niter, n };
-
-	GetRNGstate(); // enable use of RNGs
-
-	double x[n];
-	for (int i = 0; i < niter; ++i) {
-		hitandrun_randDir(x, n);
-		writeRow(&result, i, x);
-	}
-
-	PutRNGstate();
-}

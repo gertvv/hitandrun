@@ -2,9 +2,9 @@ har <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
   n <- length(x0)
   m <- nrow(constr$constr)
 
-  # Verify preconditions that the C-code cannot check
+  # Verify preconditions
   stopifnot(n > homogeneous)
-  stopifnot(n == dim(constr$constr)[2])
+  stopifnot(n == ncol(constr$constr))
   stopifnot(m == length(constr$rhs))
   stopifnot(constr$dir == "<=")
 
@@ -14,13 +14,10 @@ har <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
     x0 <- c(x0, 1.0)
   }
 
-  samples <- .C("hitandrun_har",
-    as.integer(n - 1), as.double(x0),
-    as.integer(m), as.double(constr$constr), as.double(constr$rhs),
-    as.integer(N), as.integer(thin),
-    samples=matrix(0.0, nrow=N/thin, ncol=n),
-    NAOK=FALSE, DUP=FALSE, PACKAGE="hitandrun"
-  )$samples
+  stopifnot(x0[n] == 1.0)
+  stopifnot(N %% thin == 0)
+
+  samples <- .Call("hitandrun_har", x0, constr$constr, constr$rhs, N, thin)
   xN <- samples[N/thin, , drop=TRUE]
   if (!is.null(transform)) {
     if (homogeneous == FALSE) { # Add column to eliminate hom. coord.
@@ -54,14 +51,9 @@ bbReject <- function(lb, ub, constr, N, homogeneous=FALSE, transform=NULL) {
     constr$constr <- cbind(constr$constr, 0)
   }
 
-  result <- .C("hitandrun_bbReject",
-    as.integer(n - 1), as.double(lb), as.double(ub),
-    as.integer(m), as.double(constr$constr), as.double(constr$rhs),
-    as.integer(N),
-    samples=matrix(0.0, nrow=N, ncol=n), reject=double(1),
-    NAOK=FALSE, DUP=FALSE, PACKAGE="hitandrun"
-  )
-  samples <- result$samples
+  result <- .Call("hitandrun_bbReject", lb, ub, constr$constr, constr$rhs, N)
+  samples <- result[[1]]
+  reject <- result[[2]]
   if (!is.null(transform)) {
     if (homogeneous == FALSE) { # Add column to eliminate hom. coord.
       transform <- cbind(transform, 0)
@@ -70,25 +62,14 @@ bbReject <- function(lb, ub, constr, N, homogeneous=FALSE, transform=NULL) {
   } else if (homogeneous == FALSE) { # Eliminate hom. coord.
     samples <- samples[, 1:(n-1), drop=FALSE]
   }
-  list(samples=samples, rejectionRate=result$reject)
+  list(samples=samples, rejectionRate=reject)
 }
 
 simplex.sample <- function(n, N, sort=FALSE) {
-  samples <- .C("hitandrun_simplexSample",
-    as.integer(n), as.integer(sort), as.integer(N),
-    samples=matrix(0.0, nrow=N, ncol=n),
-    NAOK=FALSE, DUP=FALSE, PACKAGE="hitandrun"
-  )$samples
+  samples <- .Call("hitandrun_simplexSample", n, sort, N);
   list(samples=samples)
 }
 
 hypersphere.sample <- function(n, N) { 
-  sample <- .C("hitandrun_hypersphereSample",
-               as.integer(n),
-               as.integer(N),
-               sample=matrix(0.0, nrow=N, ncol=n),
-               NAOK=FALSE, DUP=FALSE, PACKAGE="hitandrun"
-               )$sample
-  
-  return(sample)
+  .Call("hitandrun_hypersphereSample", n, N)
 }
