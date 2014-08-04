@@ -1,16 +1,3 @@
-hitandrun 0.4-3
-===============
-
-Released 2014-XX-YY
-
- - Expose eliminateRedundant in the NAMESPACE
-
- - Fix (upper|lower)BoundConstraint
-
- - Do not call rcdd::redundant with fewer than two constraints
-
- - Convert all C code to '.Call interface'
-
 hitandrun 0.4-2
 ===============
 
@@ -23,6 +10,14 @@ Released 2014-08-04
 
  - Bugfix: createTransform(inverse=TRUE) failed if the dimensionality
    was reduced by more than one.
+
+ - Expose eliminateRedundant in the NAMESPACE
+
+ - Bugfix (upper|lower)BoundConstraint
+
+ - Do not call rcdd::redundant with fewer than two constraints
+
+ - Convert all C code to '.Call interface'
 
 hitandrun 0.4-1
 ===============
