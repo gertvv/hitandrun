@@ -4,8 +4,7 @@ findFace <- function(x, constr) {
   which.max(d)
 }
 
-
-sab <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
+har <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL, boundary=FALSE) {
   n <- length(x0)
   m <- nrow(constr$constr)
 
@@ -24,49 +23,21 @@ sab <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
   stopifnot(x0[n] == 1.0)
   stopifnot(N %% thin == 0)
 
-  # normalize the constraints
+  # normalize the constraints (required for shake-and-bake)
   for (i in 1:m) {
     norm <- sqrt(sum(constr$constr[i,1:(n-1)]^2))
     constr$constr[i,] <- constr$constr[i,] / norm
     constr$rhs[i] <- constr$rhs[i] / norm
   }
 
-  # find the closest face of the polytope
-  index <- findFace(x0, constr) - 1
-
-  samples <- .Call("hitandrun_sab", x0, index, constr$constr, constr$rhs, N, thin)
-  xN <- samples[N/thin, , drop=TRUE]
-  if (!is.null(transform)) {
-    if (homogeneous == FALSE) { # Add column to eliminate hom. coord.
-      transform <- cbind(transform, 0)
-    }
-    samples <- samples %*% t(transform)
-  } else if (homogeneous == FALSE) { # Eliminate hom. coord.
-    samples <- samples[ , 1:(n-1), drop=FALSE]
-  }
-  list(samples=samples, xN=xN)
-}
-
-har <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
-  n <- length(x0)
-  m <- nrow(constr$constr)
-
-  # Verify preconditions
-  stopifnot(n > homogeneous)
-  stopifnot(n == ncol(constr$constr))
-  stopifnot(m == length(constr$rhs))
-  stopifnot(constr$dir == "<=")
-
-  if (homogeneous == FALSE) { # Change to homogeneous coordinates
-    n <- n + 1
-    constr$constr <- cbind(constr$constr, 0)
-    x0 <- c(x0, 1.0)
+  samples <- if (boundary) {
+    # find the closest face of the polytope
+    index <- findFace(x0, constr) - 1
+    .Call("hitandrun_sab", x0, index, constr$constr, constr$rhs, N, thin)
+  } else {
+    .Call("hitandrun_har", x0, constr$constr, constr$rhs, N, thin)
   }
 
-  stopifnot(x0[n] == 1.0)
-  stopifnot(N %% thin == 0)
-
-  samples <- .Call("hitandrun_har", x0, constr$constr, constr$rhs, N, thin)
   xN <- samples[N/thin, , drop=TRUE]
   if (!is.null(transform)) {
     if (homogeneous == FALSE) { # Add column to eliminate hom. coord.

@@ -7,7 +7,7 @@
 The "Hit and Run" method generates a Markov Chain whose stable state converges on the uniform distribution over a convex polytope defined by a set of linear constraints.
 }
 \usage{
-har(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL)
+har(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL, boundary=FALSE)
 }
 \arguments{
 	\item{x0}{Starting point (must be in the polytope)}
@@ -16,6 +16,7 @@ har(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL)
 	\item{thin}{Thinning factor (keep every 'thin'-th sample)}
 	\item{homogeneous}{Whether x0, constr and transform are given in homogeneous coordinate representation (see details)}
 	\item{transform}{Transformation matrix to apply to the generated samples (optional)}
+	\item{boundary}{TRUE to sample from the boundary instead of from the interior (using running shake-and-bake).}
 }
 \details{
 The constraints, starting point and transformation matrix can be given in homogeneous coordinate representation (an extra component is added to each vector, equal to 1.0).

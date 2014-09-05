@@ -3,7 +3,7 @@ useDynLib(hitandrun)
 
 export(hitandrun, har.init, har.run,
 
-       har, bbReject, simplex.sample, hypersphere.sample, sab,
+       har, bbReject, simplex.sample, hypersphere.sample,
        
        createSeedPoint, createBoundBox,
        findExtremePoints, findVertices, findInteriorPoint,
