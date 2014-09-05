@@ -110,3 +110,22 @@ SEXP hitandrun_simplexSample(SEXP _n, SEXP _sort, SEXP _niter);
  * @return n * N result matrix
  */
 SEXP hitandrun_hypersphereSample(SEXP n, SEXP N);
+
+// Shake-and-Bake stuff
+
+int hitandrun_intersect(Matrix *constr, double *rhs, double *x, double *d, double *l, int prev);
+
+void hitandrun_rsabDir(double * d, Matrix *constr, int index);
+
+/**
+ * Sample from the boundary of a convex polytope using the "running
+ * Shake-and-Bake" algorithm.
+ * @param _x0 The starting point.
+ * @param _index The index of the boundary (constraint) _x0 lies on.
+ * @param _constr The constraint matrix (normalized).
+ * @param _rhs The right hand side of the constraints.
+ * @param _niter The total number of iterations to run.
+ * @param _thin The thinning interval.
+ * @return _niter / _thin samples.
+ */
+SEXP hitandrun_sab(SEXP _x0, SEXP _index, SEXP _constr, SEXP _rhs, SEXP _niter, SEXP _thin);

@@ -4,7 +4,9 @@ pseudoinverse <- function (m) {
   if (length(msvd$d) == 0) {
     array(0, dim(m)[2:1])
   } else {
-    msvd$v %*% (1/msvd$d * t(msvd$u))
+    s <- matrix(0, nrow=length(msvd$d), ncol=length(msvd$d))
+    diag(s)[msvd$d != 0] <- 1/msvd$d[msvd$d != 0]
+    msvd$v %*% (s %*% t(msvd$u))
   }
 }
 
