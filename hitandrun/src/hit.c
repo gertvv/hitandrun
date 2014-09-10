@@ -1,6 +1,6 @@
 #include "har.h"
 
-int hitandrun_hit(Matrix *constr, double *rhs, double *x) {
+int hitandrun_hit(Matrix *constr, double *rhs, double *x, double epsilon) {
 	const int inc1 = 1;
 	const double one = 1.0, zero = 0.0; // for BLAS
 	const char trans = 'N';
@@ -11,7 +11,8 @@ int hitandrun_hit(Matrix *constr, double *rhs, double *x) {
 		&zero, a, &inc1); // a := 1Ax + 0a
 
 	for (int i = 0; i < constr->nRow; ++i) {
-		if (a[i] > rhs[i]) {
+		if (a[i] - rhs[i] > epsilon) {
+			printf("Error: %le\n", a[i] - rhs[i]);
 			return 0;
 		}
 	}

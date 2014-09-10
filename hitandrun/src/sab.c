@@ -31,7 +31,7 @@ SEXP hitandrun_sab(SEXP _x0, SEXP _index, SEXP _constr, SEXP _rhs, SEXP _niter, 
 	int index = asInteger(_index) - 1;
 
 	// check the starting point
-	if (!hitandrun_hit(&constr, rhs, x0)) {
+	if (!hitandrun_hit(&constr, rhs, x0, 1e-15)) {
 		UNPROTECT(3);
 		error("The starting point must be inside the region");
 	}

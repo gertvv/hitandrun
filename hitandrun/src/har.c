@@ -18,7 +18,7 @@ SEXP hitandrun_har(SEXP _x0, SEXP _constr, SEXP _rhs, SEXP _niter, SEXP _thin) {
 	Matrix constr = { REAL(_constr), m, nh };
 
 	// check the starting point
-	if (!hitandrun_hit(&constr, rhs, x0)) {
+	if (!hitandrun_hit(&constr, rhs, x0, 0.0)) {
 		UNPROTECT(3);
 		error("The starting point must be inside the region");
 	}

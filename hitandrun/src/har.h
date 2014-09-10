@@ -37,7 +37,7 @@ static inline void writeRow(Matrix *m, int i, double *x) {
  * @param x: the vector x.
  * @return 1 if x is within the space, 0 otherwise.
  */
-int hitandrun_hit(Matrix *constr, double *rhs, double *x);
+int hitandrun_hit(Matrix *constr, double *rhs, double *x, double epsilon);
 
 /**
  * Generate a random point on the n-dimensional unit sphere.

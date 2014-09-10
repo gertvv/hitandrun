@@ -9,9 +9,7 @@ inline double root(double x, int d) {
  * Boender et al. (1991)
  */
 void hitandrun_rsabDir(double *d, Matrix *constr, int index) {
-	const int inc1 = 1;
-	const double one = 1.0, negone = -1.0, zero = 0.0; // for BLAS
-	const char trans = 'N';
+	const int inc1 = 1; // for BLAS
 
 	int n = constr->nCol - 1;
 
