@@ -30,24 +30,25 @@ har <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL, bounda
     constr$rhs[i] <- constr$rhs[i] / norm
   }
 
-  samples <- if (boundary) {
-    # find the closest face of the polytope
-    index <- findFace(x0, constr) - 1
-    .Call("hitandrun_sab", x0, index, constr$constr, constr$rhs, N, thin)
+  result <- if (boundary) {
+    index <- findFace(x0, constr) # find the closest face of the polytope
+    rval <- .Call("hitandrun_sab", x0, index, constr$constr, constr$rhs, N, thin)
+    list(samples=rval[[1]], faces=rval[[2]])
   } else {
-    .Call("hitandrun_har", x0, constr$constr, constr$rhs, N, thin)
+    rval <- .Call("hitandrun_har", x0, constr$constr, constr$rhs, N, thin)
+    list(samples=rval)
   }
 
-  xN <- samples[N/thin, , drop=TRUE]
+  result$xN <- result$samples[N/thin, , drop=TRUE]
   if (!is.null(transform)) {
     if (homogeneous == FALSE) { # Add column to eliminate hom. coord.
       transform <- cbind(transform, 0)
     }
-    samples <- samples %*% t(transform)
+    result$samples <- result$samples %*% t(transform)
   } else if (homogeneous == FALSE) { # Eliminate hom. coord.
-    samples <- samples[ , 1:(n-1), drop=FALSE]
+    result$samples <- result$samples[ , 1:(n-1), drop=FALSE]
   }
-  list(samples=samples, xN=xN)
+  result
 }
 
 bbReject <- function(lb, ub, constr, N, homogeneous=FALSE, transform=NULL) {
