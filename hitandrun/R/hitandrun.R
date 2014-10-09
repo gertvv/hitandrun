@@ -96,7 +96,11 @@ har.run <- function(state, n.samples) {
     }
   })
   state$x0 <- result$xN
-  list(state = state, samples = result$samples)
+  if (state$boundary) {
+      list(state = state, samples = result$samples, faces = result$faces)
+  } else {
+      list(state = state, samples = result$samples)
+  }
 }
 
 hitandrun <- function(constr,
