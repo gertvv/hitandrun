@@ -34,7 +34,7 @@ mergeConstraints(...)
 \details{
 See \code{\link{har}} for a description of the constraint format.
 
-\code{simplexConstraints} encodes the n-simplex: \eqn{\forall_k w_{k} \geq 0}{all k: w_k <= 1} and \eqn{\sum_k w_k = 0}{sum_k(w_k) = 1}
+\code{simplexConstraints} encodes the n-simplex: \eqn{\forall_k w_{k} \geq 0}{all k: w_k >= 0} and \eqn{\sum_k w_k = 1}{sum_k(w_k) = 1}
 
 \code{lowerBoundConstraint} encodes \eqn{w_{i} \geq x}{w_i >= x}
 
