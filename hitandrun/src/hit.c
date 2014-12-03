@@ -12,7 +12,6 @@ int hitandrun_hit(Matrix *constr, double *rhs, double *x, double epsilon) {
 
 	for (int i = 0; i < constr->nRow; ++i) {
 		if (a[i] - rhs[i] > epsilon) {
-			printf("Error: %le\n", a[i] - rhs[i]);
 			return 0;
 		}
 	}
