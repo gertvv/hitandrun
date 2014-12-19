@@ -12,3 +12,6 @@ clean:
 
 install: $(PACKAGE)
 	R CMD INSTALL hitandrun
+
+check:
+	R CMD check hitandrun

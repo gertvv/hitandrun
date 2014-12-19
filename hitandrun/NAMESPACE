@@ -1,11 +1,13 @@
 ## compiled code
 useDynLib(hitandrun)
 
-export(hitandrun, har.init, har.run,
+export(hitandrun, har.init, har.run, har,
 
-       har, bbReject, simplex.sample, hypersphere.sample,
+       shakeandbake, sab.init, sab.run, sab,
+
+       bbReject, simplex.sample, hypersphere.sample,
        
-       createSeedPoint, createBoundBox,
+       createSeedPoint, findFace, createBoundBox,
        findExtremePoints, findVertices, findInteriorPoint,
        solution.basis, createTransform, transformConstraints,
        

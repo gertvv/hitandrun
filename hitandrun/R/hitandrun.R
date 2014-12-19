@@ -41,8 +41,7 @@ har.init <- function(constr,
     thin = NULL,
     x0.randomize = FALSE, x0.method="slacklp",
     x0 = NULL,
-    eliminate=TRUE,
-    boundary=FALSE) {
+    eliminate=TRUE) {
   stopifnot(length(constr[['rhs']]) == length(constr[['dir']]))
   stopifnot(length(constr[['rhs']]) == nrow(constr[['constr']]))
   stopifnot(length(constr[['rhs']]) > 0)
@@ -81,8 +80,7 @@ har.init <- function(constr,
     transform = transform,
     constr = constr,
     x0 = x0,
-    thin = thin,
-    boundary = boundary)
+    thin = thin)
 }
 
 har.run <- function(state, n.samples) {
@@ -91,16 +89,11 @@ har.run <- function(state, n.samples) {
     if (n == 0) {
       list(samples = matrix(rep(basis$translate, each=n.samples), nrow=n.samples), xN = 1)
     } else {
-      har(x0, constr, N=n.samples * thin, thin=thin, homogeneous=TRUE, transform=transform,
-          boundary=boundary)
+      har(x0, constr, N=n.samples * thin, thin=thin, homogeneous=TRUE, transform=transform)
     }
   })
   state$x0 <- result$xN
-  if (state$boundary) {
-      list(state = state, samples = result$samples, faces = result$faces)
-  } else {
-      list(state = state, samples = result$samples)
-  }
+  list(state = state, samples = result$samples)
 }
 
 hitandrun <- function(constr,
@@ -109,9 +102,8 @@ hitandrun <- function(constr,
     thin = NULL,
     x0.randomize = FALSE, x0.method="slacklp",
     x0 = NULL,
-    eliminate=TRUE,
-    boundary = FALSE) {
-  state <- har.init(constr, thin.fn, thin, x0.randomize, x0.method, x0, eliminate, boundary)
+    eliminate=TRUE) {
+  state <- har.init(constr, thin.fn, thin, x0.randomize, x0.method, x0, eliminate)
   result <- har.run(state, n.samples)
   result$samples
 }
