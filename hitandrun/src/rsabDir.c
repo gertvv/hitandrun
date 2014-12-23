@@ -18,6 +18,11 @@ void hitandrun_rsabDir(double *d, Matrix *constr, int index) {
 		c[i] = *get(constr, index, i);
 	}
 
+  if (n == 1) {
+    d[0] = -c[0];
+    return;
+  }
+
 	double r = root(unif_rand(), n - 1);
 	hitandrun_randDir(d, n); // \~{u} in the paper
 

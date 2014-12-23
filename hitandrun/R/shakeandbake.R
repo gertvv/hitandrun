@@ -4,9 +4,8 @@ sab.init <- function(constr,
     x0.randomize = FALSE, x0.method="slacklp",
     x0 = NULL,
     eliminate=TRUE) {
-
   state <- har.init(constr, thin.fn, thin, x0.randomize, x0.method, x0, eliminate)
-  state$i0 <- findFace(x0, constr) # find the closest face of the polytope
+  state$i0 <- findFace(state$x0, state$constr) # find the closest face of the polytope
   state
 }
 
