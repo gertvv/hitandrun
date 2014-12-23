@@ -27,6 +27,7 @@ Constraints are given as a list(constr=A, rhs=b, dir=d), where d should contain 
 See \code{\link{shakeandbake}} for a "Shake and Bake" sampler that also supports equality constraints.
 The constraints define the polytope as usual for linear programming: \eqn{Ax \leq b}{Ax <= b}.
 In particular, it must be true that \eqn{A x_0 \leq b}{Ax0 <= b}.
+Points are generated from the boundary of the polytope (where equality holds for one of the constraints), using the "running" shake and bake sampler, which samples the direction vector so that every move point is accepted (Boender et al. 1991).
 }
 \value{
 A list, containing:
