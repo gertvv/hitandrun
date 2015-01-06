@@ -70,9 +70,7 @@ samples <- shakeandbake(constr, n.samples=1000)
 stopifnot(dim(samples) == c(1000, 3))
 stopifnot(all.equal(apply(samples, 1, sum), rep(1, 1000)))
 
-# close to 0 the ratio samples[,1]/samples[,2] is off due to floating
-# point accuracy in the transform
-sel <- samples[,3] > 0.5
+sel <- samples[,3] > 0.5 # detect which side we're on
 stopifnot(all.equal(samples[sel,], matrix(rep(c(0,0,1), each=sum(sel)), ncol=3)))
 stopifnot(all.equal(samples[!sel,], matrix(rep(c(2/3,1/3,0), each=sum(sel)), ncol=3)))
 
