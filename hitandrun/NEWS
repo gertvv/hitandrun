@@ -1,3 +1,12 @@
+hitandrun 0.5
+=============
+
+Released 2015-01-06
+
+ - Add "Shake and Bake" method to sample from the boundary of polytopes
+
+ - Modify DESCRIPTION to conform to CRAN guidelines
+
 hitandrun 0.4-2
 ===============
 
