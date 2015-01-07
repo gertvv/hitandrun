@@ -5,7 +5,7 @@ findFace <- function(x, constr) {
 }
 
 checkPolytope <- function(x0, constr, homogeneous, transform) {
-  n <- length(x0)
+  n <- if (!is.null(x0)) length(x0) else ncol(constr$constr)
   m <- nrow(constr$constr)
 
   # Verify preconditions
@@ -18,7 +18,7 @@ checkPolytope <- function(x0, constr, homogeneous, transform) {
     stopifnot(x0[n] == 1.0)
     list(n = n - 1,
          m = m,
-         x0 = x0[1:(n - 1)],
+         x0 = if (is.null(x0)) x0 else x0[1:(n - 1)],
          constr = list(constr = constr$constr[ , 1:(n - 1), drop=FALSE],
                        rhs = constr$rhs - constr$constr[ , n, drop=TRUE],
                        dir = constr$dir),
@@ -82,7 +82,7 @@ sab <- function(x0, i0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
 }
 
 bbReject <- function(lb, ub, constr, N, homogeneous=FALSE, transform=NULL) {
-  args <- checkPolytope(rep(1, ncol(constr$constr) + homogeneous), constr, homogeneous, transform)
+  args <- checkPolytope(NULL, constr, homogeneous, transform)
   stopifnot(args$n == length(lb))
   stopifnot(args$n == length(ub))
 
