@@ -11,17 +11,17 @@ inline double root(double x, int d) {
 void hitandrun_rsabDir(double *d, Matrix *constr, int index) {
 	const int inc1 = 1; // for BLAS
 
-	int n = constr->nCol - 1;
+	int n = constr->nCol;
 
 	double c[n]; // the constraint vector
 	for (int i = 0; i < n; ++i) {
 		c[i] = *get(constr, index, i);
 	}
 
-  if (n == 1) {
-    d[0] = -c[0];
-    return;
-  }
+	if (n == 1) {
+		d[0] = -c[0];
+		return;
+	}
 
 	double r = root(unif_rand(), n - 1);
 	hitandrun_randDir(d, n); // \~{u} in the paper

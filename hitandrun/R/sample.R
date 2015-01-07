@@ -62,45 +62,23 @@ har <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
 }
 
 sab <- function(x0, i0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
-  n <- length(x0)
-  m <- nrow(constr$constr)
-
-  # Verify preconditions
-  stopifnot(n > homogeneous)
-  stopifnot(n == ncol(constr$constr))
-  stopifnot(m == length(constr$rhs))
-  stopifnot(constr$dir == "<=")
-
-  if (homogeneous == FALSE) { # Change to homogeneous coordinates
-    n <- n + 1
-    constr$constr <- cbind(constr$constr, 0)
-    x0 <- c(x0, 1.0)
-  }
-
-  stopifnot(x0[n] == 1.0)
   stopifnot(N %% thin == 0)
+  args <- checkPolytope(x0, constr, homogeneous, transform)
 
+  constr <- args$constr
   # normalize the constraints (required for shake-and-bake)
-  for (i in 1:m) {
-    norm <- sqrt(sum(constr$constr[i,1:(n-1)]^2))
+  for (i in 1:args$m) {
+    norm <- sqrt(sum(constr$constr[i,]^2))
     constr$constr[i,] <- constr$constr[i,] / norm
     constr$rhs[i] <- constr$rhs[i] / norm
   }
 
-  rval <- .Call("hitandrun_sab", x0, i0, constr$constr, constr$rhs, N, thin)
-  result <- list(samples=rval[[1]], faces=rval[[2]])
+  rval <- .Call("hitandrun_sab", args$x0, i0, constr$constr, constr$rhs, N, thin)
 
-  result$xN <- result$samples[N/thin, , drop=TRUE]
-  result$iN <- result$faces[N/thin]
-  if (!is.null(transform)) {
-    if (homogeneous == FALSE) { # Add column to eliminate hom. coord.
-      transform <- cbind(transform, 0)
-    }
-    result$samples <- result$samples %*% t(transform)
-  } else if (homogeneous == FALSE) { # Eliminate hom. coord.
-    result$samples <- result$samples[ , 1:(n-1), drop=FALSE]
-  }
-  result
+  list(samples=args$transform(rval[[1]]),
+       xN=args$xN(rval[[1]]),
+       faces=rval[[2]],
+       iN=rval[[2]][length(rval[[2]])])
 }
 
 bbReject <- function(lb, ub, constr, N, homogeneous=FALSE, transform=NULL) {

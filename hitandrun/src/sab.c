@@ -16,9 +16,8 @@ SEXP hitandrun_sab(SEXP _x0, SEXP _index, SEXP _constr, SEXP _rhs, SEXP _niter, 
 	// get problem dimensions
 	int const niter = asInteger(_niter);
 	int const thin = asInteger(_thin);
-	int const n = length(_x0) - 1;
+	int const n = length(_x0);
 	int const m = length(_rhs);
-	int const nh = n + 1; // needed for BLAS
 	int const inc1 = 1; // needed for BLAS
 
 	// convert input vectors / matrices
@@ -27,7 +26,7 @@ SEXP hitandrun_sab(SEXP _x0, SEXP _index, SEXP _constr, SEXP _rhs, SEXP _niter, 
 	_rhs = PROTECT(coerceVector(_rhs, REALSXP));
 	double *x0 = REAL(_x0);
 	double *rhs = REAL(_rhs);
-	Matrix constr = { REAL(_constr), m, nh };
+	Matrix constr = { REAL(_constr), m, n };
 	int index = asInteger(_index) - 1;
 
 	// check the starting point
@@ -37,8 +36,8 @@ SEXP hitandrun_sab(SEXP _x0, SEXP _index, SEXP _constr, SEXP _rhs, SEXP _niter, 
 	}
 
 	// allocate output matrix
-	SEXP _samples = PROTECT(allocMatrix(REALSXP, niter / thin, nh));
-	Matrix samples = { REAL(_samples), niter / thin, nh };
+	SEXP _samples = PROTECT(allocMatrix(REALSXP, niter / thin, n));
+	Matrix samples = { REAL(_samples), niter / thin, n };
 	SEXP _indices = PROTECT(allocVector(REALSXP, niter / thin));
 	double *indices = REAL(_indices);
 	SEXP _result = PROTECT(allocVector(VECSXP, 2));
@@ -46,10 +45,9 @@ SEXP hitandrun_sab(SEXP _x0, SEXP _index, SEXP _constr, SEXP _rhs, SEXP _niter, 
 	SET_VECTOR_ELT(_result, 1, _indices);
 
 	// state variables
-	double x[n + 1];
-	memcpy(x, x0, (n + 1) * sizeof(double));
-	double d[n + 1];
-	d[n] = 0; // homogeneous coordinates -- final direction component always 0.
+	double x[n];
+	memcpy(x, x0, n * sizeof(double));
+	double d[n];
 	double l; // length to move
 
 	GetRNGstate(); // enable use of RNGs
@@ -59,7 +57,7 @@ SEXP hitandrun_sab(SEXP _x0, SEXP _index, SEXP _constr, SEXP _rhs, SEXP _niter, 
 
 		// calculate the intersection with the boundary
 		index = hitandrun_intersect(&constr, rhs, x, d, &l, index);
-		F77_CALL(daxpy)(&nh, &l, d, &inc1, x, &inc1); // x := ld + x
+		F77_CALL(daxpy)(&n, &l, d, &inc1, x, &inc1); // x := ld + x
 
 		if (!R_FINITE(x[0])) {
 			error("Generated NA");
