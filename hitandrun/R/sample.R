@@ -25,7 +25,7 @@ checkPolytope <- function(x0, constr, homogeneous, transform) {
          transform = function(samples) {
            if (!is.null(transform)) {
              mat <- samples %*% t(transform[ , 1:(n - 1), drop=FALSE])
-             sweep(mat, MARGIN=2, transform[ , n, drop=TRUE], '+')
+             t(t(mat) + transform[ , n, drop=TRUE])
            } else {
              cbind(samples, 1)
            }
