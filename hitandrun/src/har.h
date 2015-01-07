@@ -63,16 +63,12 @@ void hitandrun_bound(Matrix *constr, double *rhs, double *x, double *d, double *
 /**
  * Hit-and-Run sampling using exact intersections with the linear constraints.
  * It samples from the convex region Ax <= b.
- * Coordinate vectors are given in homogeneous coordinates (i.e. the last
- * coordinate is set equal to 1) so the constraint matrix can perform
- * translation etc. The generated jump direction will have its last coordinate
- * equal to 0.
- * @param x0: vector representing the seed point (n + 1 components)
- * @param constr: the m * (n + 1) constraint matrix A
+ * @param x0: vector representing the seed point (n components)
+ * @param constr: the m * n constraint matrix A
  * @param rhs: the vector b (m components): Ax <= b
  * @param niter: number of iterations to sample for
  * @param thin: thinning interval (will return N=niter/thin samples)
- * @return N * (n + 1) result matrix
+ * @return N * n result matrix
  */
 SEXP hitandrun_har(SEXP x0, SEXP constr, SEXP rhs, SEXP niter, SEXP thin);
 

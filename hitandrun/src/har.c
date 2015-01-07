@@ -4,9 +4,8 @@ SEXP hitandrun_har(SEXP _x0, SEXP _constr, SEXP _rhs, SEXP _niter, SEXP _thin) {
 	// get problem dimensions
 	int const niter = asInteger(_niter);
 	int const thin = asInteger(_thin);
-	int const n = length(_x0) - 1;
+	int const n = length(_x0);
 	int const m = length(_rhs);
-	int const nh = n + 1; // needed for BLAS
 	int const inc1 = 1; // needed for BLAS
 
 	// convert input vectors / matrices
@@ -15,7 +14,7 @@ SEXP hitandrun_har(SEXP _x0, SEXP _constr, SEXP _rhs, SEXP _niter, SEXP _thin) {
 	_rhs = PROTECT(coerceVector(_rhs, REALSXP));
 	double *x0 = REAL(_x0);
 	double *rhs = REAL(_rhs);
-	Matrix constr = { REAL(_constr), m, nh };
+	Matrix constr = { REAL(_constr), m, n };
 
 	// check the starting point
 	if (!hitandrun_hit(&constr, rhs, x0, 0.0)) {
@@ -24,14 +23,13 @@ SEXP hitandrun_har(SEXP _x0, SEXP _constr, SEXP _rhs, SEXP _niter, SEXP _thin) {
 	}
 
 	// allocate output matrix
-	SEXP _result = PROTECT(allocMatrix(REALSXP, niter / thin, nh));
-	Matrix result = { REAL(_result), niter / thin, nh };
+	SEXP _result = PROTECT(allocMatrix(REALSXP, niter / thin, n));
+	Matrix result = { REAL(_result), niter / thin, n };
 
 	// state variables
-	double x[n + 1];
-	memcpy(x, x0, (n + 1) * sizeof(double));
-	double d[n + 1];
-	d[n] = 0; // homogeneous coordinates -- final direction component always 0.
+	double x[n];
+	memcpy(x, x0, n * sizeof(double));
+	double d[n];
 	double l[2];
 
 	GetRNGstate(); // enable use of RNGs
@@ -48,7 +46,7 @@ SEXP hitandrun_har(SEXP _x0, SEXP _constr, SEXP _rhs, SEXP _niter, SEXP _thin) {
 			error("Bounding function gave empty interval");
 		}
 		double v = l[0] + unif_rand() * (l[1] - l[0]);
-		F77_CALL(daxpy)(&nh, &v, d, &inc1, x, &inc1); // x := vd + x
+		F77_CALL(daxpy)(&n, &v, d, &inc1, x, &inc1); // x := vd + x
 
 		if ((i + 1) % thin == 0) { // write result
 			writeRow(&result, i / thin, x);

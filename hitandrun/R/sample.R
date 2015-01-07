@@ -4,7 +4,7 @@ findFace <- function(x, constr) {
   which.max(d)
 }
 
-har <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
+checkPolytope <- function(x0, constr, homogeneous, transform) {
   n <- length(x0)
   m <- nrow(constr$constr)
 
@@ -14,28 +14,51 @@ har <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
   stopifnot(m == length(constr$rhs))
   stopifnot(constr$dir == "<=")
 
-  if (homogeneous == FALSE) { # Change to homogeneous coordinates
-    n <- n + 1
-    constr$constr <- cbind(constr$constr, 0)
-    x0 <- c(x0, 1.0)
+  if (homogeneous) { # Change to homogeneous coordinates
+    stopifnot(x0[n] == 1.0)
+    list(n = n - 1,
+         m = m,
+         x0 = x0[1:(n - 1)],
+         constr = list(constr = constr$constr[ , 1:(n - 1), drop=FALSE],
+                       rhs = constr$rhs - constr$constr[ , n, drop=TRUE],
+                       dir = constr$dir),
+         transform = function(samples) {
+           if (!is.null(transform)) {
+             mat <- samples %*% t(transform[ , 1:(n - 1), drop=FALSE])
+             sweep(mat, MARGIN=2, transform[ , n, drop=TRUE], '+')
+           } else {
+             cbind(samples, 1)
+           }
+         },
+         xN = function(samples) {
+           c(samples[nrow(samples), , drop=TRUE], 1)
+         })
+  } else {
+    list(n = n,
+         m = m,
+         x0 = x0,
+         constr = constr,
+         transform = function(samples) {
+           if (!is.null(transform)) {
+             samples %*% t(transform)
+           } else {
+             samples
+           }
+         },
+         xN = function(samples) {
+           samples[nrow(samples), , drop=TRUE]
+         })
   }
+}
 
-  stopifnot(x0[n] == 1.0)
+har <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
   stopifnot(N %% thin == 0)
+  args <- checkPolytope(x0, constr, homogeneous, transform)
 
-  rval <- .Call("hitandrun_har", x0, constr$constr, constr$rhs, N, thin)
-  result <- list(samples=rval)
+  rval <- .Call("hitandrun_har", args$x0, args$constr$constr, args$constr$rhs, N, thin)
 
-  result$xN <- result$samples[N/thin, , drop=TRUE]
-  if (!is.null(transform)) {
-    if (homogeneous == FALSE) { # Add column to eliminate hom. coord.
-      transform <- cbind(transform, 0)
-    }
-    result$samples <- result$samples %*% t(transform)
-  } else if (homogeneous == FALSE) { # Eliminate hom. coord.
-    result$samples <- result$samples[ , 1:(n-1), drop=FALSE]
-  }
-  result
+  list(samples=args$transform(rval),
+       xN=args$xN(rval))
 }
 
 sab <- function(x0, i0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
