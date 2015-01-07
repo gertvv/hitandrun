@@ -82,38 +82,13 @@ sab <- function(x0, i0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
 }
 
 bbReject <- function(lb, ub, constr, N, homogeneous=FALSE, transform=NULL) {
-  n <- ncol(constr$constr)
-  m <- nrow(constr$constr)
+  args <- checkPolytope(rep(1, ncol(constr$constr) + homogeneous), constr, homogeneous, transform)
+  stopifnot(args$n == length(lb))
+  stopifnot(args$n == length(ub))
 
-  # Verify preconditions that the C-code cannot check
-  stopifnot(n > homogeneous)
-  if (homogeneous == FALSE) {
-    stopifnot(n == length(lb))
-    stopifnot(n == length(ub))
-  } else {
-    stopifnot(n - 1 == length(lb))
-    stopifnot(n - 1 == length(ub))
-  }
-  stopifnot(m == length(constr$rhs))
-  stopifnot(constr$dir == "<=")
-
-  if (homogeneous == FALSE) { # Change to homogeneous coordinates
-    n <- n + 1
-    constr$constr <- cbind(constr$constr, 0)
-  }
-
-  result <- .Call("hitandrun_bbReject", lb, ub, constr$constr, constr$rhs, N)
-  samples <- result[[1]]
-  reject <- result[[2]]
-  if (!is.null(transform)) {
-    if (homogeneous == FALSE) { # Add column to eliminate hom. coord.
-      transform <- cbind(transform, 0)
-    }
-    samples <- samples %*% t(transform)
-  } else if (homogeneous == FALSE) { # Eliminate hom. coord.
-    samples <- samples[, 1:(n-1), drop=FALSE]
-  }
-  list(samples=samples, rejectionRate=reject)
+  rval <- .Call("hitandrun_bbReject", lb, ub, args$constr$constr, args$constr$rhs, N)
+  list(samples=args$transform(rval[[1]]),
+       rejectionRate=rval[[2]])
 }
 
 simplex.sample <- function(n, N, sort=FALSE) {

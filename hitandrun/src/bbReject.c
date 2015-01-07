@@ -5,7 +5,6 @@ SEXP hitandrun_bbReject(SEXP _lb, SEXP _ub, SEXP _constr, SEXP _rhs, SEXP _niter
 	int const niter = asInteger(_niter);
 	int const n = length(_lb);
 	int const m = length(_rhs);
-	int const nh = n + 1;
 
 	// convert input vectors / matrices
 	_lb = PROTECT(coerceVector(_lb, REALSXP));
@@ -14,12 +13,12 @@ SEXP hitandrun_bbReject(SEXP _lb, SEXP _ub, SEXP _constr, SEXP _rhs, SEXP _niter
 	_rhs = PROTECT(coerceVector(_rhs, REALSXP));
 	double *lb = REAL(_lb);
 	double *ub = REAL(_ub);
-	Matrix constr = { REAL(_constr), m, nh };
+	Matrix constr = { REAL(_constr), m, n };
 	double *rhs = REAL(_rhs);
 
 	// allocate output matrix
-	SEXP _result = PROTECT(allocMatrix(REALSXP, niter, nh));
-	Matrix result = { REAL(_result), niter, nh };
+	SEXP _result = PROTECT(allocMatrix(REALSXP, niter, n));
+	Matrix result = { REAL(_result), niter, n };
 	double reject = 0.0;
 
 	// internal state variables
@@ -27,8 +26,7 @@ SEXP hitandrun_bbReject(SEXP _lb, SEXP _ub, SEXP _constr, SEXP _rhs, SEXP _niter
 	for (int j = 0; j < n; ++j) {
 		d[j] = ub[j] - lb[j];
 	}
-	double x[n + 1];
-	x[n] = 1.0;
+	double x[n];
 
 	GetRNGstate(); // enable use of RNGs
 
