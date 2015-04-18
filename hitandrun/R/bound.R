@@ -16,6 +16,10 @@ findInteriorPoint <- function(constr, homogeneous=FALSE, randomize=FALSE) {
     stop("Underconstrained problem")
   }
 
+  if (any(constr$dir != "<=")) {
+    stop("findInteriorPoint only allows <= constraints")
+  }
+
   f <- if (randomize) {
     runif(m, min=0.01, max=1)
   } else {
@@ -39,7 +43,11 @@ findInteriorPoint <- function(constr, homogeneous=FALSE, randomize=FALSE) {
   h <- rcdd::makeH(ineq.constr, ineq.rhs, eq.constr, eq.rhs)
 
   obj <- c(rep(0, n+m), 1) # maximize minimum slack
-  sol <- rcdd::q2d(rcdd::lpcdd(rcdd::d2q(h), rcdd::d2q(obj), minimize=FALSE)$primal.solution)
+  sol <- rcdd::lpcdd(rcdd::d2q(h), rcdd::d2q(obj), minimize=FALSE)
+  if (sol$solution.type != "Optimal") {
+    stop(paste("No solution:", sol$solution.type))
+  }
+  sol <- rcdd::q2d(sol$primal.solution)
   if (sol[n+m+1] <= 0) stop("hitandrun::findInteriorPoint: infeasible constraints")
   sol[1:n]
 }
