@@ -1,6 +1,6 @@
 Package: hitandrun
 Type: Package
-Title: "Hit and Run" and "Shake and Bake" for Sampling Uniformly From Convex Shapes
+Title: "Hit and Run" and "Shake and Bake" for Sampling Uniformly from Convex Shapes
 Version: 0.5-1
 Date: 2015-04-18
 Author: Gert van Valkenhoef, Tommi Tervonen
