@@ -1,11 +1,18 @@
+hitandrun 0.5-1
+===============
+
+Released 2015-04-18
+
+ - Check for failures in findInteriorPoint and give clear errors.
+
 hitandrun 0.5
 =============
 
 Released 2015-01-06
 
- - Add "Shake and Bake" method to sample from the boundary of polytopes
+ - Add "Shake and Bake" method to sample from the boundary of polytopes.
 
- - Modify DESCRIPTION to conform to CRAN guidelines
+ - Modify DESCRIPTION to conform to CRAN guidelines.
 
 hitandrun 0.4-2
 ===============
