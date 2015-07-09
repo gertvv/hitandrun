@@ -1,6 +1,8 @@
 ## compiled code
 useDynLib(hitandrun)
 
+importFrom(stats, runif)
+
 export(hitandrun, har.init, har.run, har,
 
        shakeandbake, sab.init, sab.run, sab,
