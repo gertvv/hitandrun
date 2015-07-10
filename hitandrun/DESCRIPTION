@@ -10,3 +10,4 @@ URL: http://github.com/gertvv/hitandrun
 License: GPL-3
 LazyLoad: yes
 Imports: rcdd (>= 1.1), stats
+Suggests: testthat (>= 0.8)
