@@ -55,6 +55,11 @@ findInteriorPoint <- function(constr, homogeneous=FALSE, randomize=FALSE) {
 findExtremePoints <- function(constr, homogeneous=FALSE) {
   n <- dim(constr$constr)[2]
   nh <- n
+
+  if (any(constr$dir != "<=")) {
+    stop("findInteriorPoint only allows <= constraints")
+  }
+
   h <- if (homogeneous == TRUE) {
     n <- n - 1
     hom <- homogeneousCoordinateConstraint(n)
@@ -68,13 +73,21 @@ findExtremePoints <- function(constr, homogeneous=FALSE) {
     function(i) {
       obj <- rep(0, nh)
       obj[i] <- 1
-      rcdd::q2d(rcdd::lpcdd(rcdd::d2q(h), rcdd::d2q(obj), minimize=minimize)$primal.solution)
+      sol <- rcdd::lpcdd(rcdd::d2q(h), rcdd::d2q(obj), minimize=minimize)
+      if (sol$solution.type != "Optimal") {
+        stop(paste("No solution:", sol$solution.type))
+      }
+      rcdd::q2d(sol$primal.solution)
     }
   }
   t(cbind(sapply(1:n, findExtreme(TRUE)), sapply(1:n, findExtreme(FALSE))))
 }
 
 findVertices <- function(constr, homogeneous=FALSE) {
+  if (any(constr$dir != "<=")) {
+    stop("findInteriorPoint only allows <= constraints")
+  }
+
   h <- if (homogeneous == TRUE) {
     n <- dim(constr$constr)[2]
     hom <- homogeneousCoordinateConstraint(n - 1)
@@ -84,10 +97,10 @@ findVertices <- function(constr, homogeneous=FALSE) {
   }
 
   v <- rcdd::q2d(rcdd::scdd(rcdd::d2q(h))$output)
-  # Check that the output are vertices, not other things that would indicate
-  # a bug
-  stopifnot(v[,1] == "0")
-  stopifnot(v[,2] == "1")
+  # Check that the output are vertices, not other things that would indicate a problem
+  if (v[,1] == "0" || v[,2] == "1") {
+    stop("Failed to enumerate vertices. Is the polytope unbounded?")
+  }
 
   # Return the vertices only 
   v[ , -c(1,2), drop=FALSE]
