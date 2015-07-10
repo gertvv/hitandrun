@@ -98,7 +98,7 @@ findVertices <- function(constr, homogeneous=FALSE) {
 
   v <- rcdd::q2d(rcdd::scdd(rcdd::d2q(h))$output)
   # Check that the output are vertices, not other things that would indicate a problem
-  if (v[,1] == "0" || v[,2] == "1") {
+  if (v[,1] != "0" || v[,2] != "1") {
     stop("Failed to enumerate vertices. Is the polytope unbounded?")
   }
 

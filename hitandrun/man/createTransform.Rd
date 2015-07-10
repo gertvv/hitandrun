@@ -1,12 +1,12 @@
 \name{createTransform}
 \alias{createTransform}
 \title{
-Calculate the basis for the solution space of a system of linear equations
+Create transformation matrices
 }
 \description{
 This function takes a basis, consisting of an \eqn{n \times m}{n*m} change of basis matrix and an \eqn{n}{n}-vector representing the origin of the \eqn{m}{m}-space, and generates a matrix to transform points in the \eqn{m}{m}-space, given in homogeneous coordinates, to the \eqn{n}-space.
 
-The inverse transform can also be generated, and conversion can be to homogeneous coordinates instead of Cartesion ones.
+The inverse transform can also be generated, and conversion can be to homogeneous coordinates instead of Cartesian ones.
 }
 \usage{
 createTransform(basis, inverse=FALSE, keepHomogeneous=inverse)
