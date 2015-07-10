@@ -1,3 +1,17 @@
+hitandrun 0.5-2
+===============
+
+Released 2015-07-10
+
+ - Check for failures in findExtremePoints and findVertices and give
+   clear errors.
+
+ - Simplify C code by eliminating homogeneous coordinate.
+
+ - Transition to testthat for testing.
+
+ - Explicitly import functions from R core packages.
+
 hitandrun 0.5-1
 ===============
 
