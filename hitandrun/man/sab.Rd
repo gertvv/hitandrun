@@ -37,7 +37,7 @@ A list, containing:
 	\item{iN}{Face on which the last generated sample lies.}
 }
 \references{
-	Boender, C. G. E., Caron, R. J., McDonald, J. F., Rinnooy Kan, A. H. G., Romeijn, H. E., Smith, R. L., Telgen, J., and Vorst, A. C. F. (1991) "Shake-and-Bake Algorithms for Generating Uniform Points on the Boundary of Bounded Polyhedra". \emph{Operations Research} 39(6):945-954. \href{http://dx.doi.org/10.1287/opre.39.6.945}{doi:10.1287/opre.39.6.945}
+	Boender, C. G. E., Caron, R. J., McDonald, J. F., Rinnooy Kan, A. H. G., Romeijn, H. E., Smith, R. L., Telgen, J., and Vorst, A. C. F. (1991) "Shake-and-Bake Algorithms for Generating Uniform Points on the Boundary of Bounded Polyhedra". \emph{Operations Research} 39(6):945-954. \href{https://doi.org/10.1287/opre.39.6.945}{doi:10.1287/opre.39.6.945}
 }
 \author{
 Gert van Valkenhoef
