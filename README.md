@@ -5,7 +5,7 @@ This project provides an implementation of the "Hit and Run" algorithm
 for sampling from convex shapes. Our motivation for doing this is to
 enable the fast generation of arbitrarily constrained weights in
 high-dimensional space. This should enable applying e.g. SMAA
-(http://smaa.fi/) with more complex weigth constraints.
+(http://smaa.fi/) with more complex weight constraints.
 
 R implementation
 ----------------
