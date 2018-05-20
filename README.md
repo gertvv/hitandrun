@@ -1,6 +1,8 @@
 "Hit and Run" sampler
 =====================
 
+[![Build Status](https://travis-ci.com/gertvv/hitandrun.svg?branch=master)](https://travis-ci.com/gertvv/hitandrun)
+
 This project provides an implementation of the "Hit and Run" algorithm
 for sampling from convex shapes. Our motivation for doing this is to
 enable the fast generation of arbitrarily constrained weights in
