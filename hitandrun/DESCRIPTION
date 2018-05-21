@@ -1,8 +1,8 @@
 Package: hitandrun
 Type: Package
 Title: "Hit and Run" and "Shake and Bake" for Sampling Uniformly from Convex Shapes
-Version: 0.5-3
-Date: 2016-12-23
+Version: 0.5-4
+Date: 2018-05-21
 Author: Gert van Valkenhoef, Tommi Tervonen
 Maintainer: Gert van Valkenhoef <gert@gertvv.nl>
 Description: The "Hit and Run" Markov Chain Monte Carlo method for sampling uniformly from convex shapes defined by linear constraints, and the "Shake and Bake" method for sampling from the boundary of such shapes. Includes specialized functions for sampling normalized weights with arbitrary linear constraints.
