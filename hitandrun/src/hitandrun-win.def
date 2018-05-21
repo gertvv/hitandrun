@@ -1,0 +1,3 @@
+LIBRARY hitandrun.dll
+EXPORTS
+  R_init_hitandrun
