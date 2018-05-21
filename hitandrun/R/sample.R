@@ -55,7 +55,7 @@ har <- function(x0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
   stopifnot(N %% thin == 0)
   args <- checkPolytope(x0, constr, homogeneous, transform)
 
-  rval <- .Call("hitandrun_har", args$x0, args$constr$constr, args$constr$rhs, N, thin)
+  rval <- .Call(hitandrun_har, args$x0, args$constr$constr, args$constr$rhs, N, thin)
 
   list(samples=args$transform(rval),
        xN=args$xN(rval))
@@ -73,7 +73,7 @@ sab <- function(x0, i0, constr, N, thin=1, homogeneous=FALSE, transform=NULL) {
     constr$rhs[i] <- constr$rhs[i] / norm
   }
 
-  rval <- .Call("hitandrun_sab", args$x0, i0, constr$constr, constr$rhs, N, thin)
+  rval <- .Call(hitandrun_sab, args$x0, i0, constr$constr, constr$rhs, N, thin)
 
   list(samples=args$transform(rval[[1]]),
        xN=args$xN(rval[[1]]),
@@ -86,16 +86,16 @@ bbReject <- function(lb, ub, constr, N, homogeneous=FALSE, transform=NULL) {
   stopifnot(args$n == length(lb))
   stopifnot(args$n == length(ub))
 
-  rval <- .Call("hitandrun_bbReject", lb, ub, args$constr$constr, args$constr$rhs, N)
+  rval <- .Call(hitandrun_bbReject, lb, ub, args$constr$constr, args$constr$rhs, N)
   list(samples=args$transform(rval[[1]]),
        rejectionRate=rval[[2]])
 }
 
 simplex.sample <- function(n, N, sort=FALSE) {
-  samples <- .Call("hitandrun_simplexSample", n, sort, N);
+  samples <- .Call(hitandrun_simplexSample, n, sort, N);
   list(samples=samples)
 }
 
 hypersphere.sample <- function(n, N) { 
-  .Call("hitandrun_hypersphereSample", n, N)
+  .Call(hitandrun_hypersphereSample, n, N)
 }

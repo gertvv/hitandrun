@@ -1,3 +1,4 @@
+PKG_CFLAGS=$(C_VISIBILITY)
 PKG_LIBS=$(BLAS_LIBS) $(FLIBS)
 OBJECTS=har.o bound.o hit.o randDir.o bbReject.o simplexSample.o hypersphereSample.o \
-	sab.o rsabDir.o intersect.o
+	sab.o rsabDir.o intersect.o init.o

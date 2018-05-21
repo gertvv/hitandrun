@@ -1,5 +1,5 @@
 ## compiled code
-useDynLib(hitandrun)
+useDynLib(hitandrun, .registration = TRUE)
 
 importFrom(stats, runif)
 
