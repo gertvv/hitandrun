@@ -1,9 +1,5 @@
 #include "har.h"
 
-inline double root(double x, int d) {
-	return pow(x, 1.0/d);
-}
-
 /**
  * Generate the direction for "running Shake-and-Bake" according to 1.3.3 of
  * Boender et al. (1991)
@@ -23,7 +19,7 @@ void hitandrun_rsabDir(double *d, Matrix *constr, int index) {
 		return;
 	}
 
-	double r = root(unif_rand(), n - 1);
+	double r = pow(unif_rand(), 1.0/(n - 1));
 	hitandrun_randDir(d, n); // \~{u} in the paper
 
 	double cd = F77_CALL(ddot)(&n, c, &inc1, d, &inc1);
