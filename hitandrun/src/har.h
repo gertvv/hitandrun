@@ -3,6 +3,10 @@
 #include <R_ext/RS.h>
 #include <R_ext/BLAS.h>
 
+#ifndef FCONE
+#define FCONE
+#endif
+
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
 

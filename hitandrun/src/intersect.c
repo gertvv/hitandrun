@@ -17,19 +17,19 @@ int hitandrun_intersect(Matrix *constr, double *rhs, double *x, double *d, doubl
 	memcpy(a, rhs, constr->nRow * sizeof(double));
 	F77_CALL(dgemv)(&trans, &(constr->nRow), &(constr->nCol),
 		&negone, constr->data, &(constr->nRow), x, &inc1,
-		&one, a, &inc1); // a := -1Ax + 1a (= b - Ax)
+		&one, a, &inc1 FCONE); // a := -1Ax + 1a (= b - Ax)
 
 	double c[constr->nRow];
 	F77_CALL(dgemv)(&trans, &(constr->nRow), &(constr->nCol),
 		&one, constr->data, &(constr->nRow), d, &inc1,
-		&zero, c, &inc1); // c := 1Ad + 0c
+		&zero, c, &inc1 FCONE); // c := 1Ad + 0c
 
 	// we know Ax <= b, now we need to find the values of t such that
 	// A(x + td) <= b, i.e. t(Ad) <= b - Ax, and find the maximum:
 	//
 	//   min_{i:(Ad)_i>0} (b - Ax)_i / (Ad)_i
 	*l = NA_REAL;
-	int idx;
+	int idx = 0;
 	for (int i = 0; i < constr->nRow; ++i) {
 		if (i != prev && c[i] > 0.0) {
 			double t = a[i] / c[i];

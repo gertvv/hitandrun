@@ -26,8 +26,8 @@ This is a generalization of the methods for sampling from the simplex.
 Maintainer: Gert van Valkenhoef <g.h.m.van.valkenhoef@rug.nl>
 }
 \references{
-    Tervonen, T., van Valkenhoef, G., Basturk, N., and Postmus, D. (2012) "Hit-And-Run enables efficient weight generation for simulation-based multiple criteria decision analysis". \emph{European Journal of Operational Research} 224(3) 552-559. \href{https://doi.org/10.1016/j.ejor.2012.08.026}{doi:10.1016/j.ejor.2012.08.026}
-    van Valkenhoef, G., Tervonen, T., and Postmus, D. (2014) "Notes on 'Hit-And-Run enables efficient weight generation for simulation-based multiple criteria decision analysis'". \emph{European Journal of Operational Research} (in press). \href{https://doi.org/10.1016/j.ejor.2014.06.036}{doi:10.1016/j.ejor.2014.06.036}
+    Tervonen, T., van Valkenhoef, G., Basturk, N., and Postmus, D. (2012) "Hit-And-Run enables efficient weight generation for simulation-based multiple criteria decision analysis". \emph{European Journal of Operational Research} 224(3) 552-559. \doi{10.1016/j.ejor.2012.08.026}
+    van Valkenhoef, G., Tervonen, T., and Postmus, D. (2014) "Notes on 'Hit-And-Run enables efficient weight generation for simulation-based multiple criteria decision analysis'". \emph{European Journal of Operational Research} (in press). \doi{10.1016/j.ejor.2014.06.036}
 }
 \note{
 "Hit and Run" is a Markov Chain Monte Carlo (MCMC) method, so generated samples form a correlated time series. To get a uniform sample, you need \eqn{O^*(n^3)}{O*(n^3)} samples, where n is the dimension of the sampling space.
