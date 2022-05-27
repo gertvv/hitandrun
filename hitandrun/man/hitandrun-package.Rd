@@ -23,7 +23,7 @@ When the sampling space is restricted by different linear equality constraints, 
 This is a generalization of the methods for sampling from the simplex.
 }
 \author{
-Maintainer: Gert van Valkenhoef <g.h.m.van.valkenhoef@rug.nl>
+Maintainer: Gert van Valkenhoef <gert@gertvv.nl>
 }
 \references{
     Tervonen, T., van Valkenhoef, G., Basturk, N., and Postmus, D. (2012) "Hit-And-Run enables efficient weight generation for simulation-based multiple criteria decision analysis". \emph{European Journal of Operational Research} 224(3) 552-559. \doi{10.1016/j.ejor.2012.08.026}

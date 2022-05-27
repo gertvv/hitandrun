@@ -78,7 +78,7 @@ stopifnot(all.equal(samples[faces==1,1], rep(0, sum(faces==1))))
 stopifnot(all.equal(samples[faces==2,2], rep(0, sum(faces==2))))
 stopifnot(all.equal(samples[faces==3,1] + samples[faces==3,2], rep(1, sum(faces==3))))
 
-\dontrun{plot(samples)}
+\donttest{plot(samples)}
 
 }
 \keyword{shake-and-bake}

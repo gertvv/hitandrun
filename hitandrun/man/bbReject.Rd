@@ -58,7 +58,7 @@ stopifnot(samples >= 0)
 # Check that x_1 + x_2 <= 1
 stopifnot(samples[,1] + samples[,2] <= 1)
 
-\dontrun{plot(samples)}
+\donttest{plot(samples)}
 
 }
 \keyword{bounding box}
